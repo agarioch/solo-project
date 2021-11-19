@@ -6,7 +6,7 @@ const Assets = () => {
   const [dbData, setdbData] = useState([]);
 
   useEffect(() => {
-    fetch('http://10.10.22.28:4000')
+    fetch(process.env.REACT_APP_DB)
       .then((res) => res.json())
       .then((output) => {
         setdbData(output);

@@ -12,7 +12,7 @@ import { useNavigation } from '@react-navigation/native';
 import { RootState } from '../../redux/Store';
 import { useSelector } from 'react-redux';
 
-const db_url = 'http://10.10.22.28:4000';
+const db_url = process.env.REACT_APP_DB;
 
 const CoinPie = ({ coinValues }) => {
   const coinAmount = useSelector(

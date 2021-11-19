@@ -24,10 +24,10 @@ const News: FC<CoinNews> = () => {
       setFilteredNews(filtered);
     }
   };
-
+  console.log('api', process.env.REACT_APP_DB)
   const getData = () => {
     return fetch(
-      `https://cryptonews-api.com/api/v1/category?section=general&items=50&token=jza2gmt5nvxo0cqjka1xjjqojwizcmlx8lpeutgl&items=50`
+      `https://cryptonews-api.com/api/v1/category?section=general&items=50&token=${process.env.REACT_APP_API_KEY}&items=50`
     )
       .then((res) => res.json())
       .then((output) => {
@@ -57,10 +57,10 @@ const News: FC<CoinNews> = () => {
         setCryptoNews(arr);
       });
   }, []);
-
+  console.log(`https://cryptonews-api.com/api/v1?tickers=${input}&items=50&token=${process.env.REACT_APP_API_KEY}`)
   const displayPersonalNews = useCallback((...input) => {
     fetch(
-      `https://cryptonews-api.com/api/v1?tickers=${input}&items=50&token=jza2gmt5nvxo0cqjka1xjjqojwizcmlx8lpeutgl`
+      `https://cryptonews-api.com/api/v1?tickers=${input}&items=50&token=${process.env.REACT_APP_API_KEY}`
     )
       .then((res) => res.json())
       .then((output) => console.log(output));

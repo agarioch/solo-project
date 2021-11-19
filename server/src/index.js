@@ -14,7 +14,7 @@ app.use(Helmet());
 app.use(router);
 
 (async () => {
-  await mongoose.connect('mongodb://127.0.0.1:27017/coinVault_db');
+  await mongoose.connect(process.env.DB_URI);
   console.log('DB Synced');
   app.listen(port, () => console.log(`Server is running on ${port}`));
 })();

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+
 import {
   StyleSheet,
   Text,
@@ -42,7 +43,7 @@ const UserInput = ({ coinValues }) => {
       })
     );
 
-    fetch('http://10.10.22.28:4000', {
+    fetch(process.env.REACT_APP_DB, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ date, boughtPrice, userAmount, userCoin }),

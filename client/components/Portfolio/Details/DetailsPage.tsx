@@ -63,7 +63,7 @@ const DetailsPage = () => {
 
   // DELETE HTTP REQUEST
   const handleDelete = (id: string) => {
-    fetch(`http://10.10.22.28:4000/${id}`, {
+    fetch(`${process.env.REACT_APP_DB}/${id}`, {
       method: 'DELETE',
     }).then(() => {
       setValues((data) => data.filter((item: any) => item._id !== id));
@@ -86,7 +86,7 @@ const DetailsPage = () => {
 
   const getDbData = async () => {
     try {
-      await fetch('http://10.10.22.28:4000')
+      await fetch(process.env.REACT_APP_DB)
         .then((res) => res.json())
         .then((coinInfo) => {
           setValues(coinInfo);
