@@ -95,7 +95,7 @@ const DetailsPage = () => {
       console.log(error);
     }
   };
-  
+
   // @ts-ignore:next-line
   useEffect(async () => {
     getAllCoinData('BTC', 'ETH', 'SOL', 'ADA', 'DOGE', 'XRP', 'SHIB');

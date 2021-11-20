@@ -16,7 +16,7 @@ const addData = async (req, res) => {
 
 // Getting Data
 
-const getData = async (req, res) => {
+const getAllData = async (req, res) => {
   try {
     const allData = await coinModelData.find();
     res.json(allData).status(200);
@@ -39,4 +39,4 @@ const deleteData = async (req, res) => {
   }
 };
 
-module.exports = { addData, getData, deleteData };
+module.exports = { addData, getAllData, deleteData };
