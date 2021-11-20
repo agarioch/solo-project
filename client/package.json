@@ -2,6 +2,7 @@
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "start": "expo start",
+    "test": "jest",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
@@ -46,11 +47,17 @@
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
+    "@types/jest": "^27.0.3",
     "@types/react": "~17.0.21",
     "@types/react-native": "~0.64.12",
     "@types/react-native-vector-icons": "^6.4.9",
     "babel-plugin-inline-dotenv": "^1.6.0",
+    "jest": "^27.3.1",
+    "react-test-renderer": "^17.0.1",
     "typescript": "~4.3.5"
+  },
+  "jest": {
+    "preset": "react-native"
   },
   "private": true
 }
