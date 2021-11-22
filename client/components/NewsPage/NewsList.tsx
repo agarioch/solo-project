@@ -3,12 +3,7 @@ import { SafeAreaView, FlatList, RefreshControl } from 'react-native';
 import TopNav from './TopNav';
 import NewsItem from './NewsItem';
 
-const NewsList = ({
-  cryptoNews,
-  displayNFTData,
-  displayCryptoData,
-  getData,
-}) => {
+const NewsList = ({ cryptoNews, setShowNFT, getData }) => {
   const [refreshing, setRefreshing] = useState(false);
 
   const renderItem = useCallback(
@@ -29,10 +24,7 @@ const NewsList = ({
 
   return (
     <SafeAreaView>
-      <TopNav
-        displayNFTData={displayNFTData}
-        displayCryptoData={displayCryptoData}
-      />
+      <TopNav setShowNFT={setShowNFT} />
       <FlatList
         data={cryptoNews}
         renderItem={renderItem}

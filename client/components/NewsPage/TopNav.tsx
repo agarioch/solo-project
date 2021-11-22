@@ -8,17 +8,15 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
-const TopNav = ({ displayNFTData, displayCryptoData }) => {
+const TopNav = ({ setShowNFT }) => {
   const [isNft, setisNft] = useState(false);
-  const [isCrypto, setisCrypto] = useState(true);
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={isCrypto ? styles.Crypto : styles.NavItem}>
+      <View style={!isNft ? styles.Crypto : styles.NavItem}>
         <TouchableOpacity
           onPress={() => {
-            displayCryptoData();
-            setisCrypto(!isCrypto);
+            setShowNFT(false);
             setisNft(!isNft);
           }}
         >
@@ -28,9 +26,8 @@ const TopNav = ({ displayNFTData, displayCryptoData }) => {
       <View style={isNft ? styles.nft : styles.NavItem}>
         <TouchableOpacity
           onPress={() => {
-            displayNFTData();
+            setShowNFT(true);
             setisNft(!isNft);
-            setisCrypto(false);
           }}
         >
           <Text style={styles.NavItem}>NFT</Text>

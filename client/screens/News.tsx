@@ -36,16 +36,6 @@ const News: FC<CoinNews> = () => {
     getData();
   }, []);
 
-  // Resets to crypto Data on click
-
-  const displayCryptoData = () => {
-    setShowNFT(false);
-  };
-
-  const displayNFTData = () => {
-    setShowNFT(true);
-  };
-
   let newsToShow = input.length > 0 ? FilteredNews : cryptoNews;
   newsToShow = showNFT
     ? newsToShow.filter((item: any) => item.topics.includes('NFT'))
@@ -70,8 +60,7 @@ const News: FC<CoinNews> = () => {
         <NewsList
           getData={getData}
           cryptoNews={newsToShow}
-          displayCryptoData={displayCryptoData}
-          displayNFTData={displayNFTData}
+          setShowNFT={setShowNFT}
         />
       </SafeAreaView>
     </SafeAreaView>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { render } from '@testing-library/react-native';
+import { render, fireEvent } from '@testing-library/react-native';
 import NewsList from '../components/NewsPage/NewsList';
 
 const mockArticle = {
@@ -18,31 +18,35 @@ const mockArticle = {
 
 const mockData = [
   mockArticle,
-  { ...mockArticle, title: 'B' },
+  { ...mockArticle, title: 'B', topics: ['NFT'] },
   { ...mockArticle, title: 'C' },
 ];
 
 test('news list renders a list of news items', () => {
   const { getAllByText } = render(
-    <NewsList
-      cryptoNews={mockData}
-      displayCryptoData={() => {}}
-      displayNFTData={() => {}}
-      getData={() => {}}
-    />
+    <NewsList cryptoNews={mockData} setShowNFT={() => {}} getData={() => {}} />
   );
   expect(getAllByText('November 22nd 2021')).toHaveLength(3);
 });
 
 test('news list renders top nav bar', () => {
   const { getByText } = render(
-    <NewsList
-      cryptoNews={mockData}
-      displayCryptoData={() => {}}
-      displayNFTData={() => {}}
-      getData={() => {}}
-    />
+    <NewsList cryptoNews={mockData} setShowNFT={() => {}} getData={() => {}} />
   );
   expect(getByText('Crypto')).not.toBeNull();
   expect(getByText('NFT')).not.toBeNull();
+});
+
+test('clicking NFT should filter the articles for those with NFT topic', () => {
+  const setShowNFTMock = jest.fn();
+  const { getByText, getAllByText } = render(
+    <NewsList
+      cryptoNews={mockData}
+      setShowNFT={setShowNFTMock}
+      getData={() => {}}
+    />
+  );
+
+  fireEvent.press(getByText('NFT'));
+  expect(setShowNFTMock).toHaveBeenCalled();
 });
