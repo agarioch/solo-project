@@ -18,9 +18,11 @@ const testArticle = {
 };
 
 test('news item renders article from api', () => {
-  const { getByText, getByRole } = render(<NewsItem data={testArticle} />);
+  const { getByText, getAllByA11yLabel } = render(
+    <NewsItem data={testArticle} />
+  );
   expect(getByText(testArticle.title)).not.toBeNull();
-  // expect(getByRole('image')).toHaveProperty('src', testArticle.image_url);
+  // expect(getAllByA11yLabel('Story Image')).toHaveProperty('src');
   expect(getByText(`Source: ${testArticle.source_name}`)).not.toBeNull();
   expect(getByText('November 22nd 2021')).not.toBeNull();
 });
