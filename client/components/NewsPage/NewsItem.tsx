@@ -17,7 +17,11 @@ const NewsItem = ({ data }) => {
         <Text style={styles.text}>{data.title}</Text>
         <TouchableOpacity onPress={() => Linking.openURL(`${data.news_url}`)}>
           <View style={styles.imgArea}>
-            <Image source={{ uri: data.image_url }} style={styles.image} />
+            <Image
+              source={{ uri: data.image_url }}
+              style={styles.image}
+              accessibilityLabel='Story Image'
+            />
           </View>
         </TouchableOpacity>
 

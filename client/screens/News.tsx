@@ -9,9 +9,10 @@ import { CoinNews } from '../types/CoinNews';
 
 const News: FC<CoinNews> = () => {
   const [cryptoNews, setCryptoNews] = useState([]);
+  const [showNFT, setShowNFT] = useState(false);
+
   const [FilteredNews, setFilteredNews] = useState([]);
   const [showSearch, setShowSearch] = useState(false);
-
   const [input, setInput] = useState('');
 
   const filterNews = (val: string) => {
@@ -20,49 +21,25 @@ const News: FC<CoinNews> = () => {
       const filtered = cryptoNews.filter((data: CoinNews) =>
         data.title.toLowerCase().includes(input.toLowerCase())
       );
-
       setFilteredNews(filtered);
     }
   };
-  const getData = () => {
-    return fetch(
+  const getData = async () => {
+    const res = await fetch(
       `https://cryptonews-api.com/api/v1/category?section=general&items=50&token=${process.env.REACT_APP_API_KEY}&items=50`
-    )
-      .then((res) => res.json())
-      .then((output) => {
-        setCryptoNews(output.data);
-        return output.data;
-      });
+    );
+    const output = await res.json();
+    setCryptoNews(output.data);
   };
 
   useEffect(() => {
     getData();
   }, []);
 
-  // Resets to crypto Data on click
-
-  const displayCryptoData = useCallback(() => {
-    getData();
-  }, []);
-
-  const displayNFTData = useCallback(() => {
-    const arr: any = [];
-    getData()
-      .then((res) => (res = [...res]))
-      .then((final) => {
-        final.forEach((item) => {
-          if (item.topics.includes('NFT')) arr.push(item);
-        });
-        setCryptoNews(arr);
-      });
-  }, []);
-  const displayPersonalNews = useCallback((...input) => {
-    fetch(
-      `https://cryptonews-api.com/api/v1?tickers=${input}&items=50&token=${process.env.REACT_APP_API_KEY}`
-    )
-      .then((res) => res.json())
-      .then((output) => console.log(output));
-  }, []);
+  let newsToShow = input.length > 0 ? FilteredNews : cryptoNews;
+  newsToShow = showNFT
+    ? newsToShow.filter((item: any) => item.topics.includes('NFT'))
+    : newsToShow;
 
   return (
     <SafeAreaView style={styles.background}>
@@ -82,13 +59,8 @@ const News: FC<CoinNews> = () => {
         ) : null}
         <NewsList
           getData={getData}
-          FilteredNews={FilteredNews}
-          setCryptoNews={setCryptoNews}
-          cryptoNews={cryptoNews}
-          displayCryptoData={displayCryptoData}
-          displayPersonalNews={displayPersonalNews}
-          displayNFTData={displayNFTData}
-          input={input}
+          cryptoNews={newsToShow}
+          setShowNFT={setShowNFT}
         />
       </SafeAreaView>
     </SafeAreaView>
