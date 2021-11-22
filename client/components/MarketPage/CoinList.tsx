@@ -38,7 +38,6 @@ const CoinList: FC<coinData> = ({
     bottomSheetModalRef.current?.present();
   }, []);
 
-  
   const renderItem = useCallback(
     ({ item }) => (
       <CoinItem openModel={() => openModel(item)} coinItem={item} />
@@ -50,7 +49,7 @@ const CoinList: FC<coinData> = ({
 
   // Bottom Sheet
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
-  const snapPoints = useMemo(() => ['60%', '87%'], []);
+  const snapPoints = useMemo(() => ['60%', '90%'], []);
 
   return (
     <BottomSheetModalProvider>
@@ -76,12 +75,7 @@ const CoinList: FC<coinData> = ({
         backgroundStyle={{ backgroundColor: '#121212' }}
       >
         <SafeAreaView style={styles.listContainer}>
-          {selectCoin ? (
-            <BottomSheet
-              selectCoin={selectCoin}
-              sparkLine={selectCoin.sparkline_in_7d.price}
-            />
-          ) : null}
+          {selectCoin ? <BottomSheet selectCoin={selectCoin} /> : null}
         </SafeAreaView>
       </BottomSheetModal>
     </BottomSheetModalProvider>

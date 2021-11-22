@@ -18,9 +18,7 @@ const testArticle = {
 };
 
 test('news item renders article from api', () => {
-  const { getByText, getAllByA11yLabel } = render(
-    <NewsItem data={testArticle} />
-  );
+  const { getByText } = render(<NewsItem data={testArticle} />);
   expect(getByText(testArticle.title)).not.toBeNull();
   // expect(getAllByA11yLabel('Story Image')).toHaveProperty('src');
   expect(getByText(`Source: ${testArticle.source_name}`)).not.toBeNull();

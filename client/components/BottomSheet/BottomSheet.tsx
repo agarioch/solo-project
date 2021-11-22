@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import moment from 'moment';
 import {
   StyleSheet,
@@ -17,46 +17,48 @@ import {
 } from '@rainbow-me/animated-charts';
 
 // Format Line graph
-const formatSparkline = (numbers) => {
+const formatSparkline = (numbers: any[]) => {
   const sevenDaysAgo = moment().subtract(7, 'days').unix();
-  let formattedSparkline = numbers.map((item, index) => {
+  return numbers.map((item, index) => {
     return {
       x: sevenDaysAgo + (index + 1) * 3600,
       y: item,
     };
   });
-  return formattedSparkline;
 };
+
 // Format Date
-const formatDatetime = (value) => {
+const formatDatetime = (value: string | number) => {
   'worklet';
-  if (value === '') {
-    return `${new Date().toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'numeric',
-      day: 'numeric',
-    })}`;
-  }
-  const date = new Date(Number(value * 1000));
-  const s = date.getSeconds();
-  const m = date.getMinutes();
-  const h = date.getHours();
-  const d = date.getDate();
-  const n = date.getMonth();
-  const y = date.getFullYear();
-  return `${d}/${n}/${y}`;
+  return `${(value === ''
+    ? new Date()
+    : new Date(Number(value) * 1000)
+  ).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+  })}`;
 };
 
-export const { width: SIZE } = Dimensions.get('window');
+export const { width: SIZE, height: HEIGHT } = Dimensions.get('window');
 
-const BottomSheet = ({ selectCoin, sparkLine }) => {
+const BottomSheet = ({ selectCoin }) => {
+  // This state & effect fixes a bug with rainbow charts
+  // prevData & currData not updated when chart path rendered
+  const [chartVisible, setChartVisible] = useState(false);
+  useEffect(() => {
+    setTimeout(() => {
+      setChartVisible(true);
+    }, 0);
+  }, [selectCoin]);
+
   let price: string = selectCoin.current_price.toLocaleString('USD', {
     currency: 'USD',
     minimumFractionDigits: 2,
   });
 
   // Format Currency
-  const formatUSD = (value) => {
+  const formatUSD = (value: string) => {
     'worklet';
     if (value === '') {
       return `$${price}`;
@@ -68,7 +70,7 @@ const BottomSheet = ({ selectCoin, sparkLine }) => {
   return (
     <ChartPathProvider
       data={{
-        points: formatSparkline(sparkLine),
+        points: formatSparkline(selectCoin.sparkline_in_7d.price),
         smoothingStrategy: 'bezier',
       }}
     >
@@ -84,40 +86,42 @@ const BottomSheet = ({ selectCoin, sparkLine }) => {
           </View>
           <View style={styles.border}>
             <Text style={styles.listItem}>
-              {' '}
-              ATH: ${selectCoin.ath.toLocaleString()}{' '}
+              ATH: ${selectCoin.ath.toLocaleString()}
             </Text>
           </View>
-          <View style={styles.border}>
-            <Text style={styles.listItem}>
-              ATH Date: {moment(selectCoin.ath_date).format('MMMM Do YYYY')}{' '}
-            </Text>
-          </View>
-          <View style={styles.border}>
-            <Text style={styles.listItem}>
-              Circulating Supply:{' '}
-              {selectCoin.circulating_supply.toLocaleString()}
-            </Text>
-          </View>
+          {HEIGHT > 700 && (
+            <>
+              <View style={styles.border}>
+                <Text style={styles.listItem}>
+                  ATH Date: {moment(selectCoin.ath_date).format('MMMM Do YYYY')}
+                </Text>
+              </View>
+              <View style={styles.border}>
+                <Text style={styles.listItem}>
+                  Circulating Supply:{' '}
+                  {selectCoin.circulating_supply.toLocaleString()}
+                </Text>
+              </View>
+            </>
+          )}
         </View>
       </SafeAreaView>
       <View style={styles.prices}>
         <ChartYLabel style={styles.dynamicData} format={formatUSD} />
         <ChartXLabel style={styles.dynamicData} format={formatDatetime} />
       </View>
-      <ChartPath
-        height={SIZE / 2}
-        stroke={
-          selectCoin.price_change_percentage_24h > 0 ? '#34C759' : '#FF3B30'
-        }
-        strokeWidth='3'
-        width={SIZE}
-      />
 
-      <ChartDot
-        size={9}
-        style={{ backgroundColor: '#003B73', marginTop: 400 }}
-      />
+      {chartVisible && (
+        <ChartPath
+          height={SIZE / 2}
+          stroke={
+            selectCoin.price_change_percentage_24h > 0 ? '#34C759' : '#FF3B30'
+          }
+          strokeWidth='3'
+          width={SIZE}
+        />
+      )}
+      <ChartDot size={9} style={{ backgroundColor: '#003B73' }} />
     </ChartPathProvider>
   );
 };
@@ -137,7 +141,6 @@ const styles = StyleSheet.create({
   dynamicData: {
     color: 'white',
     backgroundColor: '#60A3D9',
-
     borderRadius: 50,
     width: 150,
     textAlign: 'center',
