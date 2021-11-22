@@ -15,7 +15,6 @@ import {
   ChartYLabel,
   ChartXLabel,
 } from '@rainbow-me/animated-charts';
-import { ScrollView } from 'react-native-gesture-handler';
 
 // Format Line graph
 const formatSparkline = (numbers: any[]) => {
