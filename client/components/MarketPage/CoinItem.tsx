@@ -35,7 +35,7 @@ const CoinItem = ({ coinItem, openModel }: { coinItem: coinData } | any) => {
                     : { color: '#FF3B30' }
                 }
               >
-                {coinItem.price_change_percentage_24h.toFixed(3)}%
+                {coinItem.price_change_percentage_24h.toFixed(2)}%
               </Text>
             </View>
           </View>

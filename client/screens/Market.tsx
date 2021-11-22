@@ -5,23 +5,15 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 // Component Import
 import CoinList from '../components/MarketPage/CoinList';
 import CoinSearch from '../components/MarketPage/CoinSearch';
-import MarketLoading from '../components/MarketPage/MarketLoading';
-import NftList from '../components/MarketPage/NFT/NftList';
 // Type
 import { coinData } from '../types/coinData';
+import ApiService from '../services/marketApi';
 
 const Market: FC = () => {
-  const [coin, setCoin] = useState([]);
+  const [coin, setCoin] = useState<coinData[]>([]);
+  const [filteredCoin, setFilteredCoin] = useState<coinData[]>([]);
   const [input, setInput] = useState('');
-  const [filteredCoin, setFilteredCoin] = useState([]);
   const [showSearch, setShowSearch] = useState(false);
-  const [isLoaded, setisLoaded] = useState(false);
-
-  /**
-   * Search Bar function
-   * @param val - Search Bar input value
-   * Passed into CoinSearch
-   */
 
   const filterCoins = (val: string) => {
     setInput(val);
@@ -29,21 +21,14 @@ const Market: FC = () => {
       const filtered = coin.filter((data: coinData) =>
         data.name.toLowerCase().includes(input.toLowerCase())
       );
-
       setFilteredCoin(filtered);
     }
   };
 
   const getMarketData = useCallback(() => {
-    axios
-      .get(
-        'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=20&page=1&sparkline=true&price_change_percentage=7d'
-      )
-      .then((res) => {
-        setisLoaded(true);
-        setCoin(res.data);
-        setFilteredCoin(res.data);
-      });
+    ApiService.getCoin<coinData[]>().then((data) => {
+      setCoin(data);
+    });
   }, []);
 
   useEffect(() => {
@@ -65,7 +50,6 @@ const Market: FC = () => {
       {showSearch ? (
         <CoinSearch filterCoins={filterCoins} input={input} />
       ) : null}
-
       <CoinList
         input={input}
         filteredCoin={filteredCoin}
