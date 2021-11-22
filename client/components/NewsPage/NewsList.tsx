@@ -5,16 +5,17 @@ import NewsItem from './NewsItem';
 
 const NewsList = ({
   cryptoNews,
-  input,
-  FilteredNews,
   displayNFTData,
   displayCryptoData,
   getData,
 }) => {
   const [refreshing, setRefreshing] = useState(false);
 
-  const renderItem = useCallback(({ item }) => <NewsItem data={item} />, []);
-  const keyExtractor = useCallback((item) => item.title, []);
+  const renderItem = useCallback(
+    ({ item }) => <NewsItem data={item} />,
+    [cryptoNews]
+  );
+  const keyExtractor = useCallback((item) => item.title, [cryptoNews]);
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
@@ -33,7 +34,7 @@ const NewsList = ({
         displayCryptoData={displayCryptoData}
       />
       <FlatList
-        data={input.length > 0 ? FilteredNews : cryptoNews}
+        data={cryptoNews}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
         refreshControl={

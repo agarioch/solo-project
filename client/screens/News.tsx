@@ -46,9 +46,10 @@ const News: FC<CoinNews> = () => {
     setShowNFT(true);
   };
 
-  const newsToShow = showNFT
-    ? cryptoNews.filter((item: any) => item.topics.includes('NFT'))
-    : cryptoNews;
+  let newsToShow = input.length > 0 ? FilteredNews : cryptoNews;
+  newsToShow = showNFT
+    ? newsToShow.filter((item: any) => item.topics.includes('NFT'))
+    : newsToShow;
 
   return (
     <SafeAreaView style={styles.background}>
@@ -68,11 +69,9 @@ const News: FC<CoinNews> = () => {
         ) : null}
         <NewsList
           getData={getData}
-          FilteredNews={FilteredNews}
           cryptoNews={newsToShow}
           displayCryptoData={displayCryptoData}
           displayNFTData={displayNFTData}
-          input={input}
         />
       </SafeAreaView>
     </SafeAreaView>
