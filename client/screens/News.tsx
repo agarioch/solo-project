@@ -9,6 +9,7 @@ import { CoinNews } from '../types/CoinNews';
 
 const News: FC<CoinNews> = () => {
   const [cryptoNews, setCryptoNews] = useState([]);
+  const [showNFT, setShowNFT] = useState(false);
 
   const [FilteredNews, setFilteredNews] = useState([]);
   const [showSearch, setShowSearch] = useState(false);
@@ -38,14 +39,16 @@ const News: FC<CoinNews> = () => {
   // Resets to crypto Data on click
 
   const displayCryptoData = () => {
-    getData();
+    setShowNFT(false);
   };
 
   const displayNFTData = () => {
-    setCryptoNews((current) =>
-      current.filter((item: any) => item.topics.includes('NFT'))
-    );
+    setShowNFT(true);
   };
+
+  const newsToShow = showNFT
+    ? cryptoNews.filter((item: any) => item.topics.includes('NFT'))
+    : cryptoNews;
 
   return (
     <SafeAreaView style={styles.background}>
@@ -66,7 +69,7 @@ const News: FC<CoinNews> = () => {
         <NewsList
           getData={getData}
           FilteredNews={FilteredNews}
-          cryptoNews={cryptoNews}
+          cryptoNews={newsToShow}
           displayCryptoData={displayCryptoData}
           displayNFTData={displayNFTData}
           input={input}
