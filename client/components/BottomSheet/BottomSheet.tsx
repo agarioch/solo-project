@@ -27,6 +27,25 @@ const formatSparkline = (numbers) => {
   });
   return formattedSparkline;
 };
+// Format Date
+const formatDatetime = (value) => {
+  'worklet';
+  if (value === '') {
+    return `${new Date().toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'numeric',
+      day: 'numeric',
+    })}`;
+  }
+  const date = new Date(Number(value * 1000));
+  const s = date.getSeconds();
+  const m = date.getMinutes();
+  const h = date.getHours();
+  const d = date.getDate();
+  const n = date.getMonth();
+  const y = date.getFullYear();
+  return `${d}/${n}/${y}`;
+};
 
 export const { width: SIZE } = Dimensions.get('window');
 
@@ -35,26 +54,6 @@ const BottomSheet = ({ selectCoin, sparkLine }) => {
     currency: 'USD',
     minimumFractionDigits: 2,
   });
-
-  // Formate Date
-  const formatDatetime = (value) => {
-    'worklet';
-    if (value === '') {
-      return `${new Date().toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'numeric',
-        day: 'numeric',
-      })}`;
-    }
-    const date = new Date(Number(value * 1000));
-    const s = date.getSeconds();
-    const m = date.getMinutes();
-    const h = date.getHours();
-    const d = date.getDate();
-    const n = date.getMonth();
-    const y = date.getFullYear();
-    return `${d}/${n}/${y}`;
-  };
 
   // Format Currency
   const formatUSD = (value) => {
