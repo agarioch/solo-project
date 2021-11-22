@@ -17,34 +17,26 @@ import {
 } from '@rainbow-me/animated-charts';
 
 // Format Line graph
-const formatSparkline = (numbers) => {
+const formatSparkline = (numbers: any[]) => {
   const sevenDaysAgo = moment().subtract(7, 'days').unix();
-  let formattedSparkline = numbers.map((item, index) => {
+  return numbers.map((item, index) => {
     return {
       x: sevenDaysAgo + (index + 1) * 3600,
       y: item,
     };
   });
-  return formattedSparkline;
 };
 // Format Date
-const formatDatetime = (value) => {
+const formatDatetime = (value: string | number) => {
   'worklet';
-  if (value === '') {
-    return `${new Date().toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'numeric',
-      day: 'numeric',
-    })}`;
-  }
-  const date = new Date(Number(value * 1000));
-  const s = date.getSeconds();
-  const m = date.getMinutes();
-  const h = date.getHours();
-  const d = date.getDate();
-  const n = date.getMonth();
-  const y = date.getFullYear();
-  return `${d}/${n}/${y}`;
+  return `${(value === ''
+    ? new Date()
+    : new Date(Number(value) * 1000)
+  ).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+  })}`;
 };
 
 export const { width: SIZE } = Dimensions.get('window');
@@ -56,7 +48,7 @@ const BottomSheet = ({ selectCoin, sparkLine }) => {
   });
 
   // Format Currency
-  const formatUSD = (value) => {
+  const formatUSD = (value: string) => {
     'worklet';
     if (value === '') {
       return `$${price}`;
@@ -65,6 +57,7 @@ const BottomSheet = ({ selectCoin, sparkLine }) => {
       .toFixed(2)
       .replace(/\d(?=(\d{3})+\.)/g, '$&,')}`;
   };
+
   return (
     <ChartPathProvider
       data={{
@@ -84,13 +77,12 @@ const BottomSheet = ({ selectCoin, sparkLine }) => {
           </View>
           <View style={styles.border}>
             <Text style={styles.listItem}>
-              {' '}
-              ATH: ${selectCoin.ath.toLocaleString()}{' '}
+              ATH: ${selectCoin.ath.toLocaleString()}
             </Text>
           </View>
           <View style={styles.border}>
             <Text style={styles.listItem}>
-              ATH Date: {moment(selectCoin.ath_date).format('MMMM Do YYYY')}{' '}
+              ATH Date: {moment(selectCoin.ath_date).format('MMMM Do YYYY')}
             </Text>
           </View>
           <View style={styles.border}>
