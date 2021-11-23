@@ -1,15 +1,13 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import {
-  StyleSheet,
-  Text,
-  View,
-  Keyboard,
-  TextInput,
-  SafeAreaView,
-} from 'react-native';
+import React from 'react';
+import { StyleSheet, Keyboard, TextInput, SafeAreaView } from 'react-native';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
-const CoinSearch = ({ input, filterCoins }) => {
+type CoinSearchProps = {
+  input: string;
+  filterCoins: (input: string) => void;
+};
+
+const CoinSearch = ({ input, filterCoins }: CoinSearchProps) => {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <SafeAreaView style={styles.searchContainer}>
