@@ -1,6 +1,5 @@
 import React, { useState, useEffect, FC, useCallback } from 'react';
 import { StyleSheet, Text, View, SafeAreaView } from 'react-native';
-import axios from 'axios';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 // Component Import
 import CoinList from '../components/MarketPage/CoinList';
@@ -10,31 +9,30 @@ import { coinData } from '../types/coinData';
 import ApiService from '../services/marketApi';
 
 const Market: FC = () => {
-  const [coin, setCoin] = useState<coinData[]>([]);
-  const [filteredCoin, setFilteredCoin] = useState<coinData[]>([]);
-  const [input, setInput] = useState('');
+  const [coins, setCoins] = useState<coinData[]>([]);
+  const [filteredCoins, setFilteredCoins] = useState<coinData[]>([]);
+  const [searchInput, setSearchInput] = useState('');
   const [showSearch, setShowSearch] = useState(false);
 
-  const filterCoins = (val: string) => {
-    setInput(val);
-    if (val) {
-      const filtered = coin.filter((data: coinData) =>
-        data.name.toLowerCase().includes(input.toLowerCase())
+  const filterCoins = (input: string) => {
+    setSearchInput(input);
+    if (input) {
+      const filtered = coins.filter((coin: coinData) =>
+        coin.name.toLowerCase().includes(searchInput.toLowerCase())
       );
-      setFilteredCoin(filtered);
+      setFilteredCoins(filtered);
     }
   };
-
   const getMarketData = useCallback(() => {
     ApiService.getCoin<coinData[]>().then((data) => {
-      setCoin(data);
+      setCoins(data);
     });
   }, []);
-
   useEffect(() => {
     getMarketData();
   }, []);
 
+  const coinsToDisplay = searchInput === '' ? coins : filteredCoins;
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.titleContainer}>
@@ -48,15 +46,9 @@ const Market: FC = () => {
         />
       </View>
       {showSearch ? (
-        <CoinSearch filterCoins={filterCoins} input={input} />
+        <CoinSearch filterCoins={filterCoins} input={searchInput} />
       ) : null}
-      <CoinList
-        input={input}
-        filteredCoin={filteredCoin}
-        filterCoins={filterCoins}
-        coinData={coin}
-        getMarketData={getMarketData}
-      />
+      <CoinList coinData={coinsToDisplay} getMarketData={getMarketData} />
     </SafeAreaView>
   );
 };
@@ -69,7 +61,6 @@ const styles = StyleSheet.create({
     bottom: 20,
     backgroundColor: '#080808',
   },
-
   searchBar: {
     fontSize: 30,
     color: '#BFD7ED',
@@ -81,7 +72,6 @@ const styles = StyleSheet.create({
     fontSize: 25,
     fontFamily: 'Chivo_700Bold',
   },
-
   titleContainer: {
     justifyContent: 'space-between',
     flexDirection: 'row',

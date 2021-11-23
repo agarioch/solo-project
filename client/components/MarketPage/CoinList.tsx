@@ -14,12 +14,12 @@ import {
 import BottomSheet from '../BottomSheet/BottomSheet';
 import CoinItem from './CoinItem';
 
-const CoinList: FC<coinData> = ({
-  coinData,
-  filteredCoin,
-  input,
-  getMarketData,
-}) => {
+type CoinListProps = {
+  coinData: coinData[];
+  getMarketData: () => void;
+};
+
+const CoinList = ({ coinData, getMarketData }: CoinListProps) => {
   const [selectCoin, setSelectCoin] = useState<any>(null);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -56,7 +56,7 @@ const CoinList: FC<coinData> = ({
       <SafeAreaView style={styles.listContainer}>
         <FlatList
           style={styles.flatListItem}
-          data={input.length > 0 ? filteredCoin : coinData}
+          data={coinData}
           renderItem={renderItem}
           keyExtractor={keyExtractor}
           refreshControl={
