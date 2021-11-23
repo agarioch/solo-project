@@ -1,18 +1,18 @@
 import React, { useMemo, useRef, FC, useCallback, useState } from 'react';
 import {
-  BottomSheetModal,
-  BottomSheetModalProvider,
-} from '@gorhom/bottom-sheet';
-import { coinData } from '../../types/coinData';
-import {
   StyleSheet,
   RefreshControl,
   FlatList,
   SafeAreaView,
 } from 'react-native';
+import {
+  BottomSheetModal,
+  BottomSheetModalProvider,
+} from '@gorhom/bottom-sheet';
 
 import BottomSheet from '../BottomSheet/BottomSheet';
 import CoinItem from './CoinItem';
+import { coinData } from '../../types/coinData';
 
 type CoinListProps = {
   coinData: coinData[];
@@ -20,32 +20,32 @@ type CoinListProps = {
 };
 
 const CoinList = ({ coinData, getMarketData }: CoinListProps) => {
-  const [selectCoin, setSelectCoin] = useState<any>(null);
-  const [refreshing, setRefreshing] = useState(false);
+  const [selectedCoin, setSelectedCoin] = useState<coinData | null>(null);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   const onRefresh = useCallback(() => {
-    setRefreshing(true);
+    setIsRefreshing(true);
     try {
       getMarketData();
-      setRefreshing(false);
+      setIsRefreshing(false);
     } catch (error) {
       console.error(error);
     }
-  }, [refreshing]);
+  }, [isRefreshing]);
 
-  const openModel = useCallback((data: any) => {
-    setSelectCoin(data);
+  const openModel = useCallback((coin: coinData) => {
+    setSelectedCoin(coin);
     bottomSheetModalRef.current?.present();
   }, []);
 
   const renderItem = useCallback(
-    ({ item }) => (
-      <CoinItem openModel={() => openModel(item)} coinItem={item} />
+    ({ item: coin }: { item: coinData }) => (
+      <CoinItem openModel={() => openModel(coin)} coinItem={coin} />
     ),
     []
   );
 
-  const keyExtractor = useCallback((item) => item.id.toString(), []);
+  const keyExtractor = useCallback((coin) => coin.id.toString(), []);
 
   // Bottom Sheet
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
@@ -61,7 +61,7 @@ const CoinList = ({ coinData, getMarketData }: CoinListProps) => {
           keyExtractor={keyExtractor}
           refreshControl={
             <RefreshControl
-              refreshing={refreshing}
+              refreshing={isRefreshing}
               onRefresh={onRefresh}
               tintColor='#cdebf9'
             />
@@ -75,7 +75,7 @@ const CoinList = ({ coinData, getMarketData }: CoinListProps) => {
         backgroundStyle={{ backgroundColor: '#121212' }}
       >
         <SafeAreaView style={styles.listContainer}>
-          {selectCoin ? <BottomSheet selectCoin={selectCoin} /> : null}
+          {selectedCoin ? <BottomSheet selectCoin={selectedCoin} /> : null}
         </SafeAreaView>
       </BottomSheetModal>
     </BottomSheetModalProvider>
