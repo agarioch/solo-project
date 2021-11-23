@@ -1,5 +1,4 @@
 import React, { FC } from 'react';
-import { StyleSheet, Text, View, SafeAreaView } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -76,7 +75,7 @@ const App: FC = () => {
             },
 
             // Icons for Nav Bar
-            tabBarIcon: ({ focused, color, size }) => {
+            tabBarIcon: ({ focused, color }) => {
               let iconName: string | any;
 
               if (route.name === 'Portfolio') {
@@ -88,14 +87,7 @@ const App: FC = () => {
               }
 
               // You can return any component that you like here!
-              return (
-                <Ionicons
-                  style={styles.iconItem}
-                  name={iconName}
-                  size={30}
-                  color={color}
-                />
-              );
+              return <Ionicons name={iconName} size={30} color={color} />;
             },
             tabBarActiveTintColor: '#fff',
             tabBarInactiveTintColor: 'white',
@@ -124,9 +116,3 @@ const App: FC = () => {
 };
 
 export default App;
-
-const styles = StyleSheet.create({
-  background: {},
-
-  iconItem: {},
-});
