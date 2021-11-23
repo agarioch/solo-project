@@ -33,14 +33,14 @@ const CoinList = ({ coinData, getMarketData }: CoinListProps) => {
     }
   }, [isRefreshing]);
 
-  const openModel = useCallback((coin: coinData) => {
+  const openModal = useCallback((coin: coinData) => {
     setSelectedCoin(coin);
     bottomSheetModalRef.current?.present();
   }, []);
 
   const renderItem = useCallback(
     ({ item: coin }: { item: coinData }) => (
-      <CoinItem openModel={() => openModel(coin)} coinItem={coin} />
+      <CoinItem openModal={() => openModal(coin)} coinItem={coin} />
     ),
     []
   );

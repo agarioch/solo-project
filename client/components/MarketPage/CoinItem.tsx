@@ -3,9 +3,14 @@ import { coinData } from '../../types/coinData';
 
 import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
 
-const CoinItem = ({ coinItem, openModel }: { coinItem: coinData } | any) => {
+type CoinItemProps = {
+  coinItem: coinData;
+  openModal: () => void;
+};
+
+const CoinItem = ({ coinItem, openModal }: CoinItemProps) => {
   return (
-    <TouchableOpacity onPress={openModel}>
+    <TouchableOpacity onPress={openModal}>
       <View style={styles.wrapper}>
         <View style={styles.coinItemStyle}>
           <View style={styles.left}>
