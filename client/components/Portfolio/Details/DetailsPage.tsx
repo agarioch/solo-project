@@ -18,7 +18,6 @@ const DetailsPage = () => {
   const navigation = useNavigation();
   const [values, setValues] = useState([]);
   const [apiData, setApiData] = useState([]);
-  const [refreshing, setRefreshing] = useState(false);
 
   // Returns total revenue of the portfolio
   const revenue = () => {
@@ -56,20 +55,17 @@ const DetailsPage = () => {
     // @ts-ignore:next-line
     sumofCoins[1] + sumofCoins[2] + sumofCoins[3]);
 
-  // DELETE HTTP REQUEST
-  const handleDelete = (id: string) => {
-    Services.deleteData(id).then(() => {
+  const handleDelete = async (id: string) => {
+    await Services.deleteData(id).then(() => {
       setValues((data) => data.filter((item: any) => item._id !== id));
     });
   };
 
-  const getAllCoinData = async (...userInput) => {
+  const getAllCoinData = async () => {
     try {
-      await ApiService.getCoin().then((output) => {
-        setApiData(output);
-      });
+      await ApiService.getCoin().then((output) => setApiData(output));
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
@@ -79,7 +75,7 @@ const DetailsPage = () => {
         setValues(coinInfo);
       });
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
