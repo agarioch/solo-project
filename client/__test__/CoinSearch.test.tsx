@@ -8,5 +8,5 @@ test('search inputs sent to filter function', () => {
     <CoinSearch input='' filterCoins={filterCoinsMock} />
   );
   fireEvent.changeText(getByPlaceholderText('Search...'), 'asdf');
-  expect(filterCoinsMock).toHaveBeenCalled();
+  expect(filterCoinsMock).toHaveBeenCalledWith('asdf');
 });
