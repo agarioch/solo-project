@@ -1,10 +1,8 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   TouchableOpacity,
   SafeAreaView,
-  Text,
-  View,
   KeyboardAvoidingView,
 } from 'react-native';
 
@@ -44,7 +42,7 @@ const Main = () => {
       <KeyboardAvoidingView behavior='position'>
         <SafeAreaView style={styles.coinDataArea}>
           <Header formatEmail={formatEmail} />
-          <CoinPie coinValues={coinValues} />
+          <CoinPie />
           <UserInputNav coinValues={coinValues} />
         </SafeAreaView>
       </KeyboardAvoidingView>

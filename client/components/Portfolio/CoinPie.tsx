@@ -3,20 +3,12 @@ import { StyleSheet, ScrollView, RefreshControl, Text } from 'react-native';
 import { VictoryPie } from 'victory-native';
 import { useNavigation } from '@react-navigation/native';
 
-import { RootState } from '../../redux/Store';
-import { useSelector } from 'react-redux';
-
 import Services from '../../services/API';
 
-const CoinPie = ({ coinValues }) => {
-  const coinAmount = useSelector(
-    (state: RootState) => state.CoinInputData.amount
-  );
-
+const CoinPie = () => {
   const navigation = useNavigation();
   const [refreshing, setRefreshing] = useState(false);
   const [allData, setAllData] = useState([]);
-  const [apiData, setApiData] = useState([]);
 
   let output: {}[] = [];
   let myData: any = {};
@@ -39,7 +31,6 @@ const CoinPie = ({ coinValues }) => {
       myData = {};
       myData.x = userCoin;
       myData.y = parseInt(userAmount) * timesBy;
-
       output.push(myData);
     });
   };
