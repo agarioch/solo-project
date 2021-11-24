@@ -10,39 +10,36 @@ import {
 import moment from 'moment';
 import TabIcon from '../../TabIcons/TabIcon';
 import Icons from '../../../constants/Icons';
+import ApiService from '../../../services/marketApi';
 
 const DetailsItem = ({ item, onDelete }) => {
   const [apiCall, setApiCall] = useState([]);
 
   const getAllCoinData = async (...userInput) => {
     try {
-      await fetch(
-        `https://api.nomics.com/v1/currencies/ticker?key=5df9ab07ed0bcc926c1db8e9c4320191e6ee60ca&ids=${userInput}&interval=1d`
-      )
-        .then((res) => res.json())
-        .then((output) => {
-          setApiCall(output);
-        });
+      ApiService.getCoin().then((output) => {
+        setApiCall(output);
+      });
     } catch (error) {
       console.log(error);
     }
   };
 
   const coinCurrentPrice = apiCall.map((data) => {
-    if (data.symbol == item.userCoin) {
-      return parseInt(data.price);
+    if (data['symbol'] == item.userCoin) {
+      return parseInt(data['price']);
     }
   });
 
   const CoinPriceChange = apiCall.map((data) => {
-    if (data.symbol == item.userCoin) {
-      return data['1d'].price_change_pct;
+    if (data['symbol'] == item.userCoin) {
+      return data['1d']['price_change_pct'];
     }
   });
 
   const dataNumber = apiCall.map((data) => {
-    if (data.symbol == item.userCoin) {
-      return parseInt(data.price) * item.userAmount;
+    if (data['symbol'] == item.userCoin) {
+      return parseInt(data['price']) * item.userAmount;
     }
   });
 

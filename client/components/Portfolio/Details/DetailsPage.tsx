@@ -4,15 +4,15 @@ import {
   Text,
   TouchableOpacity,
   SafeAreaView,
-  ScrollView,
-  RefreshControl,
+  // ScrollView,
+  // RefreshControl,
   FlatList,
   View,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import UserPortfolio from '../UserPortfolio';
-import { RootState } from '../../../redux/Store';
-import { useSelector } from 'react-redux';
+// import UserPortfolio from '../UserPortfolio';
+// import { RootState } from '../../../redux/Store';
+// import { useSelector } from 'react-redux';
 import DetailsItem from './DetailsItem';
 import TabIcon from '../../TabIcons/TabIcon';
 import Icons from '../../../constants/Icons';
