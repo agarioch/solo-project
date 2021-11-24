@@ -14,7 +14,7 @@ import ApiService from '../../../services/marketApi';
 const DetailsItem = ({ item, onDelete }) => {
   const [apiCall, setApiCall] = useState([]);
 
-  const getAllCoinData = async (...userInput) => {
+  const getAllCoinData = async () => {
     try {
       await ApiService.getCoin().then((output) => {
         setApiCall(output);

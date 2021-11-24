@@ -58,9 +58,7 @@ const DetailsPage = () => {
 
   // DELETE HTTP REQUEST
   const handleDelete = (id: string) => {
-    fetch(`${process.env.REACT_APP_DB}/${id}`, {
-      method: 'DELETE',
-    }).then(() => {
+    Services.deleteData(id).then(() => {
       setValues((data) => data.filter((item: any) => item._id !== id));
     });
   };

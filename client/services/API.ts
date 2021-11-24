@@ -28,9 +28,16 @@ function addData(body: {}) {
   });
 }
 
+function deleteData(id: string) {
+  return fetchRequest(`/${id}`, {
+    method: 'DELETE',
+  });
+}
+
 const Services = {
   getData,
   addData,
+  deleteData,
 };
 
 export default Services;
