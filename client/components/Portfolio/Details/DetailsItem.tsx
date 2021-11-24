@@ -17,7 +17,7 @@ const DetailsItem = ({ item, onDelete }) => {
 
   const getAllCoinData = async (...userInput) => {
     try {
-      ApiService.getCoin().then((output) => {
+      await ApiService.getCoin().then((output) => {
         setApiCall(output);
       });
     } catch (error) {
