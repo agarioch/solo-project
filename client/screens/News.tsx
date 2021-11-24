@@ -1,4 +1,5 @@
-import React, { FC, useCallback, useState, useEffect } from 'react';
+import { AxiosResponse } from 'axios';
+import React, { FC, useState, useEffect } from 'react';
 import { StyleSheet, Text, View, SafeAreaView } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 // Component Import
@@ -8,18 +9,17 @@ import NewsSearch from '../components/NewsPage/NewsSearch';
 import { CoinNews } from '../types/CoinNews';
 
 const News: FC<CoinNews> = () => {
-  const [cryptoNews, setCryptoNews] = useState([]);
+  const [allNews, setAllNews] = useState<CoinNews[]>([]);
+  const [FilteredNews, setFilteredNews] = useState<CoinNews[]>([]);
   const [showNFT, setShowNFT] = useState(false);
-
-  const [FilteredNews, setFilteredNews] = useState([]);
   const [showSearch, setShowSearch] = useState(false);
-  const [input, setInput] = useState('');
+  const [searchInput, setSearchInput] = useState('');
 
-  const filterNews = (val: string) => {
-    setInput(val);
-    if (val) {
-      const filtered = cryptoNews.filter((data: CoinNews) =>
-        data.title.toLowerCase().includes(input.toLowerCase())
+  const filterNews = (input: string) => {
+    setSearchInput(input);
+    if (input) {
+      const filtered = allNews.filter((data: CoinNews) =>
+        data.title.toLowerCase().includes(searchInput.toLowerCase())
       );
       setFilteredNews(filtered);
     }
@@ -28,15 +28,15 @@ const News: FC<CoinNews> = () => {
     const res = await fetch(
       `https://cryptonews-api.com/api/v1/category?section=general&items=50&token=${process.env.REACT_APP_API_KEY}&items=50`
     );
-    const output = await res.json();
-    setCryptoNews(output.data);
+    const output: AxiosResponse<CoinNews[]> = await res.json();
+    setAllNews(output.data);
   };
 
   useEffect(() => {
     getData();
   }, []);
 
-  let newsToShow = input.length > 0 ? FilteredNews : cryptoNews;
+  let newsToShow = searchInput.length > 0 ? FilteredNews : allNews;
   newsToShow = showNFT
     ? newsToShow.filter((item: any) => item.topics.includes('NFT'))
     : newsToShow;
@@ -55,7 +55,7 @@ const News: FC<CoinNews> = () => {
           />
         </View>
         {showSearch ? (
-          <NewsSearch input={input} filterNews={filterNews} />
+          <NewsSearch input={searchInput} filterNews={filterNews} />
         ) : null}
         <NewsList
           getData={getData}
