@@ -1,10 +1,8 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   TouchableOpacity,
   SafeAreaView,
-  Text,
-  View,
   KeyboardAvoidingView,
 } from 'react-native';
 
@@ -18,19 +16,16 @@ import UserInputNav from './UserInputArea/UserInputNav';
 import TabIcon5 from '../TabIcons/TabIcon5';
 
 import Icons from '../../constants/Icons';
+import ApiService from '../../services/marketApi';
 
 const Main = () => {
   const [coinValues, setCoinValues] = useState([]);
   const formatEmail = auth.currentUser?.email.split('@')[0];
 
   useEffect(() => {
-    fetch(
-      'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=20&page=1&sparkline=false'
-    )
-      .then((res) => res.json())
-      .then((output) => {
-        setCoinValues(output);
-      });
+    ApiService.getCoin().then((output) => {
+      setCoinValues(output);
+    });
   }, []);
 
   const navigation = useNavigation();
@@ -39,7 +34,7 @@ const Main = () => {
     auth
       .signOut()
       .then(() => navigation.goBack())
-      .catch((err) => console.log(err));
+      .catch((err: Error) => console.log(err));
   };
 
   return (
@@ -47,7 +42,7 @@ const Main = () => {
       <KeyboardAvoidingView behavior='position'>
         <SafeAreaView style={styles.coinDataArea}>
           <Header formatEmail={formatEmail} />
-          <CoinPie coinValues={coinValues} />
+          <CoinPie />
           <UserInputNav coinValues={coinValues} />
         </SafeAreaView>
       </KeyboardAvoidingView>

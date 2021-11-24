@@ -7,42 +7,38 @@ import {
   TouchableOpacity,
   Image,
 } from 'react-native';
-import moment from 'moment';
 import TabIcon from '../../TabIcons/TabIcon';
 import Icons from '../../../constants/Icons';
+import ApiService from '../../../services/marketApi';
 
 const DetailsItem = ({ item, onDelete }) => {
   const [apiCall, setApiCall] = useState([]);
 
-  const getAllCoinData = async (...userInput) => {
+  const getAllCoinData = async () => {
     try {
-      await fetch(
-        `https://api.nomics.com/v1/currencies/ticker?key=5df9ab07ed0bcc926c1db8e9c4320191e6ee60ca&ids=${userInput}&interval=1d`
-      )
-        .then((res) => res.json())
-        .then((output) => {
-          setApiCall(output);
-        });
+      await ApiService.getCoin().then((output) => {
+        setApiCall(output);
+      });
     } catch (error) {
       console.log(error);
     }
   };
 
   const coinCurrentPrice = apiCall.map((data) => {
-    if (data.symbol == item.userCoin) {
-      return parseInt(data.price);
+    if (data['symbol'] == item.userCoin) {
+      return parseInt(data['price']);
     }
   });
 
   const CoinPriceChange = apiCall.map((data) => {
-    if (data.symbol == item.userCoin) {
-      return data['1d'].price_change_pct;
+    if (data['symbol'] == item.userCoin) {
+      return data['1d']['price_change_pct'];
     }
   });
 
   const dataNumber = apiCall.map((data) => {
-    if (data.symbol == item.userCoin) {
-      return parseInt(data.price) * item.userAmount;
+    if (data['symbol'] == item.userCoin) {
+      return parseInt(data['price']) * item.userAmount;
     }
   });
 
@@ -52,18 +48,14 @@ const DetailsItem = ({ item, onDelete }) => {
   }, 1000);
   clearTimeout();
 
-  const renderImage =
-    item.userCoin === 'BTC'
-      ? 'https://g.foolcdn.com/art/companylogos/square/btc.png'
-      : item.userCoin === 'ETH'
-      ? 'https://downloads.coindesk.com/arc-hosted-images/eth.png'
-      : item.userCoin === 'ADA'
-      ? 'https://s3.cointelegraph.com/storage/uploads/view/a7872fcc56858227ffa183256a5d55e1.png'
-      : item.userCoin === 'SOL'
-      ? 'https://s2.coinmarketcap.com/static/img/coins/200x200/5426.png'
-      : null;
+  const ITEMS = {
+    BTC: 'https://g.foolcdn.com/art/companylogos/square/btc.png',
+    ETH: 'https://downloads.coindesk.com/arc-hosted-images/eth.png',
+    ADA: 'https://s3.cointelegraph.com/storage/uploads/view/a7872fcc56858227ffa183256a5d55e1.png',
+    SOL: 'https://s2.coinmarketcap.com/static/img/coins/200x200/5426.png',
+  };
 
-  const formatDate = moment(item.date).format('L');
+  const renderImage = ITEMS[item.userCoin] || null;
 
   return (
     <SafeAreaView style={styles.container}>

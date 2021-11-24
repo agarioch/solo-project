@@ -17,14 +17,7 @@ const Header = ({ formatEmail }) => {
   return (
     <SafeAreaView style={styles.header}>
       <Image
-        style={{
-          width: 50,
-          height: 50,
-          borderRadius: 50,
-          position: 'absolute',
-          left: -70,
-          top: 10,
-        }}
+        style={styles.img}
         source={{
           uri: 'https://pbs.twimg.com/profile_images/1358860486914236416/xt-FYxGU_400x400.png',
         }}
@@ -47,6 +40,14 @@ const Header = ({ formatEmail }) => {
 export default Header;
 
 const styles = StyleSheet.create({
+  img: {
+    width: 50,
+    height: 50,
+    borderRadius: 50,
+    position: 'absolute',
+    left: -70,
+    top: 10,
+  },
   header: {},
   username: {
     color: '#fff',
@@ -55,8 +56,8 @@ const styles = StyleSheet.create({
     letterSpacing: 2,
     fontFamily: 'Chivo_300Light',
     fontWeight: 'bold',
-    left: 10
+    left: 10,
   },
 
-  lottie: { height: 80, width: 80, position: 'absolute', right: -30, top: -17},
+  lottie: { height: 80, width: 80, position: 'absolute', right: -30, top: -17 },
 });

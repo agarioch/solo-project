@@ -1,16 +1,15 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { StyleSheet, Text, View, SafeAreaView, FlatList } from 'react-native';
+import { StyleSheet, Text, SafeAreaView, FlatList } from 'react-native';
+import Services from '../../../services/API';
 
 import AssetsItem from './AssetsItem';
 const Assets = () => {
   const [dbData, setdbData] = useState([]);
 
   useEffect(() => {
-    fetch(process.env.REACT_APP_DB)
-      .then((res) => res.json())
-      .then((output) => {
-        setdbData(output);
-      });
+    Services.getData().then((output) => {
+      setdbData(output);
+    });
   });
 
   const renderItem = useCallback(
@@ -24,17 +23,7 @@ const Assets = () => {
       <FlatList
         style={styles.flatListItem}
         ListHeaderComponent={
-          <Text
-            style={{
-              color: '#fff',
-
-              opacity: 0.6,
-              letterSpacing: 2,
-              fontFamily: 'Chivo_400Regular',
-            }}
-          >
-            Previous Transactions:
-          </Text>
+          <Text style={styles.txt}>Previous Transactions:</Text>
         }
         data={dbData}
         renderItem={renderItem}
@@ -47,6 +36,12 @@ const Assets = () => {
 export default Assets;
 
 const styles = StyleSheet.create({
+  txt: {
+    color: '#fff',
+    opacity: 0.6,
+    letterSpacing: 2,
+    fontFamily: 'Chivo_400Regular',
+  },
   container: {
     position: 'absolute',
     top: 10,

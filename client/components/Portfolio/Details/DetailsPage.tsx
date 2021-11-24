@@ -4,30 +4,26 @@ import {
   Text,
   TouchableOpacity,
   SafeAreaView,
-  ScrollView,
-  RefreshControl,
   FlatList,
   View,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import UserPortfolio from '../UserPortfolio';
-import { RootState } from '../../../redux/Store';
-import { useSelector } from 'react-redux';
 import DetailsItem from './DetailsItem';
 import TabIcon from '../../TabIcons/TabIcon';
 import Icons from '../../../constants/Icons';
+import Services from '../../../services/API';
+import ApiService from '../../../services/marketApi';
 
 const DetailsPage = () => {
   const navigation = useNavigation();
   const [values, setValues] = useState([]);
   const [apiData, setApiData] = useState([]);
-  const [refreshing, setRefreshing] = useState(false);
 
   // Returns total revenue of the portfolio
   const revenue = () => {
     let total = 0;
     values.map((item) => {
-      const firstAmount = item.boughtPrice * item.userAmount;
+      const firstAmount = item['boughtPrice'] * item['userAmount'];
       total += firstAmount;
     });
     return total;
@@ -35,25 +31,23 @@ const DetailsPage = () => {
 
   const totalRev = revenue();
 
-  // console.log('API DATA DETAILS:', apiData);
-
-  const valuesCoin: any = values.map((item) => item.userCoin);
-  const valuesAmount: any = values.map((item) => item.userAmount);
+  const valuesCoin: any = values.map((item) => item['userCoin']);
+  const valuesAmount: any = values.map((item) => item['userAmount']);
 
   const dataNumber = apiData.map((data) => {
-    if (valuesCoin.includes(data.symbol)) {
-      return parseInt(data.price) * parseInt(valuesAmount);
+    if (valuesCoin.includes(data['symbol'])) {
+      return parseInt(data['price']) * parseInt(valuesAmount);
     }
   });
 
   const sumofCoins = dataNumber.map((price) => {
     let totalSum = 0;
     if (price !== undefined) {
-      totalSum += parseInt(price);
+      totalSum += price;
     } else {
       return null;
     }
-    return parseInt(totalSum);
+    return totalSum;
   });
 
   // @ts-ignore:next-line
@@ -61,38 +55,27 @@ const DetailsPage = () => {
     // @ts-ignore:next-line
     sumofCoins[1] + sumofCoins[2] + sumofCoins[3]);
 
-  // DELETE HTTP REQUEST
-  const handleDelete = (id: string) => {
-    fetch(`${process.env.REACT_APP_DB}/${id}`, {
-      method: 'DELETE',
-    }).then(() => {
+  const handleDelete = async (id: string) => {
+    await Services.deleteData(id).then(() => {
       setValues((data) => data.filter((item: any) => item._id !== id));
     });
   };
 
-  const getAllCoinData = async (...userInput) => {
+  const getAllCoinData = async () => {
     try {
-      await fetch(
-        `https://api.nomics.com/v1/currencies/ticker?key=5df9ab07ed0bcc926c1db8e9c4320191e6ee60ca&ids=${userInput}&interval=1d`
-      )
-        .then((res) => res.json())
-        .then((output) => {
-          setApiData(output);
-        });
+      await ApiService.getCoin().then((output) => setApiData(output));
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
   const getDbData = async () => {
     try {
-      await fetch(process.env.REACT_APP_DB)
-        .then((res) => res.json())
-        .then((coinInfo) => {
-          setValues(coinInfo);
-        });
+      await Services.getData().then((coinInfo) => {
+        setValues(coinInfo);
+      });
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 

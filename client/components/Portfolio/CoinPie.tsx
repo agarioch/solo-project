@@ -1,74 +1,51 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import {
-  StyleSheet,
-  ScrollView,
-  RefreshControl,
-  Text,
-  TouchableOpacity,
-} from 'react-native';
+import { StyleSheet, ScrollView, RefreshControl, Text } from 'react-native';
 import { VictoryPie } from 'victory-native';
 import { useNavigation } from '@react-navigation/native';
 
-import { RootState } from '../../redux/Store';
-import { useSelector } from 'react-redux';
+import Services from '../../services/API';
 
-const db_url = process.env.REACT_APP_DB;
-
-const CoinPie = ({ coinValues }) => {
-  const coinAmount = useSelector(
-    (state: RootState) => state.CoinInputData.amount
-  );
-
+const CoinPie = () => {
   const navigation = useNavigation();
   const [refreshing, setRefreshing] = useState(false);
   const [allData, setAllData] = useState([]);
-  const [apiData, setApiData] = useState([]);
 
   let output: {}[] = [];
   let myData: any = {};
 
-  const populateGraph = (coinArgs) => {
+  const populateGraph = (coinArgs: any[]) => {
     coinArgs.forEach((item) => {
       let userAmount = item.userAmount;
       let userCoin = item.userCoin;
 
-      const timesBy =
-        userCoin === 'BTC'
-          ? 23
-          : userCoin === 'ETH'
-          ? 5
-          : userCoin === 'SOL'
-          ? 2
-          : userCoin === 'DOGE'
-          ? 0.14
-          : userCoin === 'ADA'
-          ? 1
-          : 1;
+      const COINS = {
+        BTC: 23,
+        ETH: 5,
+        SOL: 2,
+        DOGE: 0.14,
+        ADA: 1,
+      };
+
+      const timesBy = COINS[userCoin] || 1;
 
       myData = {};
       myData.x = userCoin;
-
       myData.y = parseInt(userAmount) * timesBy;
-
       output.push(myData);
     });
   };
 
   useEffect(() => {
-    fetch(db_url)
-      .then((res) => res.json())
-      .then((coinInfo) => {
-        populateGraph(coinInfo);
-      });
+    Services.getData().then((coinInfo) => {
+      populateGraph(coinInfo);
+    });
   }, [populateGraph]);
 
   const getData = () => {
-    fetch(db_url)
-      .then((res) => res.json())
-      .then((coinInfo) => {
-        setAllData(coinInfo);
-        populateGraph(allData);
-      });
+    Services.getData().then((coinInfo) => {
+      setAllData(coinInfo);
+      populateGraph(allData);
+    });
   };
 
   const onRefresh = useCallback(() => {
