@@ -4,4 +4,5 @@ export interface CoinNews {
   title: string;
   topics: [];
   source_name: string;
+  date: string;
 }

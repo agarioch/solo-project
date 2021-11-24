@@ -1,5 +1,5 @@
 import React from 'react';
-const moment = require('moment');
+import moment from 'moment';
 import {
   StyleSheet,
   Text,
@@ -9,8 +9,12 @@ import {
   Linking,
   TouchableOpacity,
 } from 'react-native';
+import { CoinNews } from '../../types/CoinNews';
 
-const NewsItem = ({ data }) => {
+type NewsItemProps = {
+  data: CoinNews;
+};
+const NewsItem = ({ data }: NewsItemProps) => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.newsArticle}>

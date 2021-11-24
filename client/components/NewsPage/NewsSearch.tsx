@@ -7,7 +7,12 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native';
 
-const NewsSearch = ({ input, filterNews }) => {
+type NewsSearchProps = {
+  input: string;
+  filterNews: (input: string) => void;
+};
+
+const NewsSearch = ({ input, filterNews }: NewsSearchProps) => {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <SafeAreaView style={styles.searchContainer}>

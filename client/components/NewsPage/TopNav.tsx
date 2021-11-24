@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-
 import {
   StyleSheet,
   Text,
@@ -8,7 +7,11 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
-const TopNav = ({ setShowNFT }) => {
+const TopNav = ({
+  setShowNFT,
+}: {
+  setShowNFT: React.Dispatch<React.SetStateAction<boolean>>;
+}) => {
   const [isNft, setisNft] = useState(false);
 
   return (
