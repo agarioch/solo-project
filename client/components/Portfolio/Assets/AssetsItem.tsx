@@ -5,16 +5,14 @@ import moment from 'moment';
 const AssetsItem = ({ dbData }) => {
   const totalSpent = dbData.userAmount * dbData.boughtPrice;
 
-  const renderImage =
-    dbData.userCoin === 'BTC'
-      ? 'https://g.foolcdn.com/art/companylogos/square/btc.png'
-      : dbData.userCoin === 'ETH'
-      ? 'https://downloads.coindesk.com/arc-hosted-images/eth.png'
-      : dbData.userCoin === 'ADA'
-      ? 'https://s3.cointelegraph.com/storage/uploads/view/a7872fcc56858227ffa183256a5d55e1.png'
-      : dbData.userCoin === 'SOL'
-      ? 'https://s2.coinmarketcap.com/static/img/coins/200x200/5426.png'
-      : null;
+  const ITEMS = {
+    BTC: 'https://g.foolcdn.com/art/companylogos/square/btc.png',
+    ETH: 'https://downloads.coindesk.com/arc-hosted-images/eth.png',
+    ADA: 'https://s3.cointelegraph.com/storage/uploads/view/a7872fcc56858227ffa183256a5d55e1.png',
+    SOL: 'https://s2.coinmarketcap.com/static/img/coins/200x200/5426.png',
+  };
+
+  const renderImage = ITEMS[dbData.userCoin] || null;
 
   return (
     <SafeAreaView>
