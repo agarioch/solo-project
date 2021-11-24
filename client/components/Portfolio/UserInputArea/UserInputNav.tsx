@@ -7,44 +7,33 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import Icons from '../../../constants/Icons';
-
 import TabIcon4 from '../../TabIcons/TabIcon4';
-
 import Assets from '../Assets/Assets';
 import UserInput from './UserInput';
 
 const UserInputNav = ({ coinValues }) => {
-  const [showInput, setShowInput] = useState(false);
   const [isClicked, setisClicked] = useState(false);
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.addPosition}>
-        {isClicked ? (
-          <TouchableOpacity
-            onPress={() => {
-              setisClicked(!isClicked);
-              setShowInput(!showInput);
-            }}
-          >
+        <TouchableOpacity
+          onPress={() => {
+            setisClicked(!isClicked);
+          }}
+        >
+          {isClicked ? (
             <View style={styles.row}>
               <Text style={styles.addText}>Add Coins</Text>
               <TabIcon4 icon={Icons.addCoin} />
             </View>
-          </TouchableOpacity>
-        ) : (
-          <TouchableOpacity
-            onPress={() => {
-              setShowInput(!showInput);
-              setisClicked(!isClicked);
-            }}
-          >
+          ) : (
             <View style={styles.row}>
               <Text style={styles.asset}>View Transactions...</Text>
             </View>
-          </TouchableOpacity>
-        )}
+          )}
+        </TouchableOpacity>
       </View>
-      {!showInput ? <UserInput coinValues={coinValues} /> : <Assets />}
+      {!isClicked ? <UserInput coinValues={coinValues} /> : <Assets />}
     </SafeAreaView>
   );
 };

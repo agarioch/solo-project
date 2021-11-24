@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   Image,
 } from 'react-native';
-import moment from 'moment';
 import TabIcon from '../../TabIcons/TabIcon';
 import Icons from '../../../constants/Icons';
 import ApiService from '../../../services/marketApi';
@@ -49,18 +48,14 @@ const DetailsItem = ({ item, onDelete }) => {
   }, 1000);
   clearTimeout();
 
-  const renderImage =
-    item.userCoin === 'BTC'
-      ? 'https://g.foolcdn.com/art/companylogos/square/btc.png'
-      : item.userCoin === 'ETH'
-      ? 'https://downloads.coindesk.com/arc-hosted-images/eth.png'
-      : item.userCoin === 'ADA'
-      ? 'https://s3.cointelegraph.com/storage/uploads/view/a7872fcc56858227ffa183256a5d55e1.png'
-      : item.userCoin === 'SOL'
-      ? 'https://s2.coinmarketcap.com/static/img/coins/200x200/5426.png'
-      : null;
+  const ITEMS = {
+    BTC: 'https://g.foolcdn.com/art/companylogos/square/btc.png',
+    ETH: 'https://downloads.coindesk.com/arc-hosted-images/eth.png',
+    ADA: 'https://s3.cointelegraph.com/storage/uploads/view/a7872fcc56858227ffa183256a5d55e1.png',
+    SOL: 'https://s2.coinmarketcap.com/static/img/coins/200x200/5426.png',
+  };
 
-  const formatDate = moment(item.date).format('L');
+  const renderImage = ITEMS[item.userCoin] || null;
 
   return (
     <SafeAreaView style={styles.container}>

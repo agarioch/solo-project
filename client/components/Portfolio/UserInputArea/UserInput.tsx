@@ -13,13 +13,13 @@ import {
 
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { saveCoinData } from '../../../redux/CoinInputData';
-import { RootState } from '../../../redux/Store';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
+import Services from '../../../services/API';
 
 import TabIcon2 from '../../TabIcons/TabIcon2';
 import Icons from '../../../constants/Icons';
 
-const UserInput = ({ coinValues }) => {
+const UserInput = () => {
   const dispatch = useDispatch();
   const [date, setDate] = useState(new Date());
   const [boughtPrice, setBoughtPrice] = useState('');
@@ -28,12 +28,12 @@ const UserInput = ({ coinValues }) => {
   const [show, setshow] = useState(false);
   const [selectDate, setselectDate] = useState(true);
 
-  const onChange = (event, selectedDate) => {
+  const onChange = (_event: Event, selectedDate: Date) => {
     const currentDate = selectedDate || date;
     setDate(currentDate);
   };
 
-  const addCoinData = () => {
+  const addCoinData = async () => {
     dispatch(
       saveCoinData({
         userAmount: userAmount,
@@ -42,12 +42,7 @@ const UserInput = ({ coinValues }) => {
         date: date,
       })
     );
-
-    fetch(process.env.REACT_APP_DB, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ date, boughtPrice, userAmount, userCoin }),
-    });
+    await Services.addData({ date, boughtPrice, userAmount, userCoin });
 
     setUserAmount('');
     setUserCoin('');
@@ -189,8 +184,6 @@ const styles = StyleSheet.create({
   },
 
   datepicker: {
-    // borderWidth: 2,
-    // borderColor: '#cdebf9',
     borderBottomWidth: 3,
     borderBottomColor: '#CCE6FF',
     marginVertical: 15,

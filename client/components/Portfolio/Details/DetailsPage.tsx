@@ -32,8 +32,6 @@ const DetailsPage = () => {
 
   const totalRev = revenue();
 
-  // console.log('API DATA DETAILS:', apiData);
-
   const valuesCoin: any = values.map((item) => item['userCoin']);
   const valuesAmount: any = values.map((item) => item['userAmount']);
 
