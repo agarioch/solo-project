@@ -1,5 +1,4 @@
-// const BASE_URL = process.env.REACT_APP_DB;
-const BASE_URL = 'http://10.10.22.217:4000';
+const BASE_URL = process.env.REACT_APP_DB;
 
 async function fetchRequest(path: string, options: RequestInit | undefined) {
   try {
