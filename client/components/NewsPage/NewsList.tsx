@@ -2,25 +2,35 @@ import React, { useCallback, useState } from 'react';
 import { SafeAreaView, FlatList, RefreshControl } from 'react-native';
 import TopNav from './TopNav';
 import NewsItem from './NewsItem';
+import { CoinNews } from '../../types/CoinNews';
 
-const NewsList = ({ cryptoNews, setShowNFT, getData }) => {
-  const [refreshing, setRefreshing] = useState(false);
+type NewsListProps = {
+  cryptoNews: CoinNews[];
+  setShowNFT: React.Dispatch<React.SetStateAction<boolean>>;
+  getData: () => Promise<void>;
+};
+
+const NewsList = ({ cryptoNews, setShowNFT, getData }: NewsListProps) => {
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   const renderItem = useCallback(
-    ({ item }) => <NewsItem data={item} />,
+    ({ item }: { item: CoinNews }) => <NewsItem data={item} />,
     [cryptoNews]
   );
-  const keyExtractor = useCallback((item) => item.title, [cryptoNews]);
+  const keyExtractor = useCallback(
+    (item: CoinNews) => item.title,
+    [cryptoNews]
+  );
 
   const onRefresh = useCallback(() => {
-    setRefreshing(true);
+    setIsRefreshing(true);
     try {
       getData();
-      setRefreshing(false);
+      setIsRefreshing(false);
     } catch (error) {
       console.error(error);
     }
-  }, [refreshing]);
+  }, [isRefreshing]);
 
   return (
     <SafeAreaView>
@@ -31,7 +41,7 @@ const NewsList = ({ cryptoNews, setShowNFT, getData }) => {
         keyExtractor={keyExtractor}
         refreshControl={
           <RefreshControl
-            refreshing={refreshing}
+            refreshing={isRefreshing}
             onRefresh={onRefresh}
             tintColor='#fff'
           />
