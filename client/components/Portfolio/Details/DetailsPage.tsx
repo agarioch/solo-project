@@ -18,14 +18,14 @@ import { coinData } from '../../../types/coinData';
 
 const DetailsPage = () => {
   const navigation = useNavigation();
-  const [values, setValues] = useState<UserCoin[]>([]);
+  const [userCoins, setUserCoins] = useState<UserCoin[]>([]);
   const [apiData, setApiData] = useState<coinData[]>([]);
 
-  // Returns total revenue of the portfolio
+  // Returns total revenue of the portfolio [AG: think this is the purchase cost, not current value?]
   const revenue = () => {
     let total = 0;
-    values.map((item) => {
-      const firstAmount = item['boughtPrice'] * item['userAmount'];
+    userCoins.map((coin) => {
+      const firstAmount = coin.boughtPrice * coin.userAmount;
       total += firstAmount;
     });
     return total;
@@ -33,33 +33,36 @@ const DetailsPage = () => {
 
   const totalRev = revenue();
 
-  const valuesCoin: any = values.map((item) => item['userCoin']);
-  const valuesAmount: any = values.map((item) => item['userAmount']);
-
+  let amounts: { [coin: string]: number } = {};
+  userCoins.forEach((coin) => {
+    amounts[coin.userCoin] = coin.userAmount;
+  });
+  console.log('amounts', amounts);
   const dataNumber = apiData.map((data) => {
-    if (valuesCoin.includes(data['symbol'])) {
-      return parseInt(data['price']) * parseInt(valuesAmount);
+    console.log(data.symbol);
+    if (amounts.hasOwnProperty(String(data.symbol).toUpperCase())) {
+      return data.current_price * amounts[String(data.symbol).toUpperCase()];
     }
   });
-
-  const sumofCoins = dataNumber.map((price) => {
-    let totalSum = 0;
+  console.log('dataNumber', dataNumber);
+  const coinPrices = dataNumber.map((price) => {
     if (price !== undefined) {
-      totalSum += price;
+      return price;
     } else {
-      return null;
+      return 0;
     }
-    return totalSum;
   });
 
-  // @ts-ignore:next-line
-  const totalAmount = (sumofCoins[0] +=
-    // @ts-ignore:next-line
-    sumofCoins[1] + sumofCoins[2] + sumofCoins[3]);
-
+  const totalAmount =
+    coinPrices.reduce(
+      (acc: number, curr: number | null) => acc + (curr || 0),
+      0
+    ) || 0;
+  console.log('sumofcoins', coinPrices);
+  console.log(totalAmount);
   const handleDelete = async (id: string) => {
     await Services.deleteData(id).then(() => {
-      setValues((data) => data.filter((item: any) => item._id !== id));
+      setUserCoins((data) => data.filter((item: any) => item._id !== id));
     });
   };
 
@@ -76,7 +79,7 @@ const DetailsPage = () => {
   const getDbData = async () => {
     try {
       await Services.getData().then((coinInfo) => {
-        setValues(coinInfo);
+        setUserCoins(coinInfo);
       });
     } catch (error) {
       console.error(error);
@@ -97,50 +100,56 @@ const DetailsPage = () => {
   );
   const keyExtractor = useCallback((item) => item._id, []);
 
-  return (
-    <SafeAreaView style={styles.container}>
-      <Text style={styles.header}> Portfolio Details </Text>
+  if (userCoins.length) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <Text style={styles.header}> Portfolio Details </Text>
 
-      <View style={styles.portArea}>
-        <Text style={styles.total}>
-          Total: ${totalAmount.toLocaleString()}{' '}
-        </Text>
-        <Text style={styles.revenue}>
-          Revenue:
-          <Text style={totalAmount - totalRev > 0 ? styles.green : styles.red}>
-            {` $${(totalAmount - totalRev).toLocaleString()}`}
+        <View style={styles.portArea}>
+          <Text style={styles.total}>
+            Total: ${totalAmount.toLocaleString()}{' '}
           </Text>
-        </Text>
-      </View>
-
-      <TouchableOpacity
-        style={styles.goback}
-        onPress={() => navigation.goBack()}
-      >
-        <TabIcon icon={Icons.goBack} />
-      </TouchableOpacity>
-
-      <FlatList
-        style={styles.flatListItem}
-        ListHeaderComponent={
-          <Text
-            style={{
-              color: '#fff',
-
-              opacity: 0.6,
-              letterSpacing: 2,
-              fontFamily: 'Chivo_400Regular',
-            }}
-          >
-            Your Assets:
+          <Text style={styles.revenue}>
+            Revenue:
+            <Text
+              style={totalAmount - totalRev > 0 ? styles.green : styles.red}
+            >
+              {` $${(totalAmount - totalRev).toLocaleString()}`}
+            </Text>
           </Text>
-        }
-        data={values}
-        renderItem={renderItem}
-        keyExtractor={keyExtractor}
-      />
-    </SafeAreaView>
-  );
+        </View>
+
+        <TouchableOpacity
+          style={styles.goback}
+          onPress={() => navigation.goBack()}
+        >
+          <TabIcon icon={Icons.goBack} />
+        </TouchableOpacity>
+
+        <FlatList
+          style={styles.flatListItem}
+          ListHeaderComponent={
+            <Text
+              style={{
+                color: '#fff',
+
+                opacity: 0.6,
+                letterSpacing: 2,
+                fontFamily: 'Chivo_400Regular',
+              }}
+            >
+              Your Assets:
+            </Text>
+          }
+          data={userCoins}
+          renderItem={renderItem}
+          keyExtractor={keyExtractor}
+        />
+      </SafeAreaView>
+    );
+  } else {
+    return <Text>Loading ...</Text>;
+  }
 };
 
 export default DetailsPage;
