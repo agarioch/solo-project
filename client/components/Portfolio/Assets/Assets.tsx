@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { StyleSheet, Text, SafeAreaView, FlatList } from 'react-native';
-import Services from '../../../services/API';
+import Services from '../../../services/userCoinApi';
+import UserCoin from '../../../types/UserCoin';
 
 import AssetsItem from './AssetsItem';
 const Assets = () => {
-  const [dbData, setdbData] = useState([]);
+  const [dbData, setdbData] = useState<UserCoin[]>([]);
 
   useEffect(() => {
     Services.getData().then((output) => {

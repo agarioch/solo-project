@@ -5,4 +5,5 @@ export interface coinData {
   price_change_percentage_24h: number;
   sparkline_in_7d: any;
   ath_date: string;
+  symbol?: string;
 }

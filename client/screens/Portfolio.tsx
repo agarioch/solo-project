@@ -1,6 +1,5 @@
 import React, { FC } from 'react';
-import { globalStyles } from '../styles/globalStyle';
-import { StyleSheet, Text, View, SafeAreaView } from 'react-native';
+import { StyleSheet } from 'react-native';
 import Login from './Login';
 import DetailsPage from '../components/Portfolio/Details/DetailsPage';
 

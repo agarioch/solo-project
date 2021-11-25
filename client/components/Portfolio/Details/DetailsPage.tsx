@@ -11,13 +11,15 @@ import { useNavigation } from '@react-navigation/native';
 import DetailsItem from './DetailsItem';
 import TabIcon from '../../TabIcons/TabIcon';
 import Icons from '../../../constants/Icons';
-import Services from '../../../services/API';
+import Services from '../../../services/userCoinApi';
 import ApiService from '../../../services/marketApi';
+import UserCoin from '../../../types/UserCoin';
+import { coinData } from '../../../types/coinData';
 
 const DetailsPage = () => {
   const navigation = useNavigation();
-  const [values, setValues] = useState([]);
-  const [apiData, setApiData] = useState([]);
+  const [values, setValues] = useState<UserCoin[]>([]);
+  const [apiData, setApiData] = useState<coinData[]>([]);
 
   // Returns total revenue of the portfolio
   const revenue = () => {
@@ -63,7 +65,9 @@ const DetailsPage = () => {
 
   const getAllCoinData = async () => {
     try {
-      await ApiService.getCoin().then((output) => setApiData(output));
+      await ApiService.getCoin<coinData[]>().then((output) =>
+        setApiData(output)
+      );
     } catch (error) {
       console.error(error);
     }
@@ -81,13 +85,13 @@ const DetailsPage = () => {
 
   // @ts-ignore:next-line
   useEffect(async () => {
-    getAllCoinData('BTC', 'ETH', 'SOL', 'ADA', 'DOGE', 'XRP', 'SHIB');
+    getAllCoinData();
     await getDbData();
   }, []);
 
   const renderItem = useCallback(
-    ({ item }) => (
-      <DetailsItem apiData={apiData} onDelete={handleDelete} item={item} />
+    ({ item }: { item: UserCoin }) => (
+      <DetailsItem onDelete={handleDelete} item={item} />
     ),
     []
   );

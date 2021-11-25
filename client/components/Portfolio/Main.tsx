@@ -17,13 +17,14 @@ import TabIcon5 from '../TabIcons/TabIcon5';
 
 import Icons from '../../constants/Icons';
 import ApiService from '../../services/marketApi';
+import { coinData } from '../../types/coinData';
 
 const Main = () => {
-  const [coinValues, setCoinValues] = useState([]);
+  const [coinValues, setCoinValues] = useState<coinData[]>([]);
   const formatEmail = auth.currentUser?.email.split('@')[0];
 
   useEffect(() => {
-    ApiService.getCoin().then((output) => {
+    ApiService.getCoin<coinData[]>().then((output) => {
       setCoinValues(output);
     });
   }, []);

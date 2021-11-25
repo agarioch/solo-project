@@ -1,3 +1,5 @@
+import UserCoin from '../types/UserCoin';
+
 const BASE_URL = process.env.REACT_APP_DB;
 
 async function fetchRequest(path: string, options: RequestInit | undefined) {
@@ -13,11 +15,11 @@ async function fetchRequest(path: string, options: RequestInit | undefined) {
   }
 }
 
-function getData() {
+function getData(): Promise<UserCoin[]> {
   return fetchRequest('/', { method: 'GET' });
 }
 
-function addData(body: {}) {
+function addData(body: UserCoin) {
   return fetchRequest('/', {
     method: 'POST',
     headers: {
