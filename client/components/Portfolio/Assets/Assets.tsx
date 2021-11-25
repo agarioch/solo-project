@@ -11,7 +11,7 @@ const Assets = () => {
     Services.getData().then((output) => {
       setdbData(output);
     });
-  });
+  }, []);
 
   const renderItem = useCallback(
     ({ item }) => <AssetsItem dbData={item} />,
