@@ -9,7 +9,11 @@ async function fetchApi(options: { [key: string]: string }) {
       url: API_URL,
       ...options,
     });
-    return res.data;
+    if (res.status <= 400) {
+      return res.data;
+    } else {
+      return [];
+    }
   } catch (error) {
     console.error(error);
   }

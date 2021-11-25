@@ -21,45 +21,26 @@ const DetailsPage = () => {
   const [userCoins, setUserCoins] = useState<UserCoin[]>([]);
   const [apiData, setApiData] = useState<coinData[]>([]);
 
-  // Returns total revenue of the portfolio [AG: think this is the purchase cost, not current value?]
-  const revenue = () => {
-    let total = 0;
-    userCoins.map((coin) => {
-      const firstAmount = coin.boughtPrice * coin.userAmount;
-      total += firstAmount;
-    });
-    return total;
-  };
-
-  const totalRev = revenue();
+  const purchaseCost = userCoins.reduce(
+    (acc: number, coin) => acc + coin.boughtPrice * coin.userAmount,
+    0
+  );
 
   let amounts: { [coin: string]: number } = {};
   userCoins.forEach((coin) => {
     amounts[coin.userCoin] = coin.userAmount;
   });
-  console.log('amounts', amounts);
-  const dataNumber = apiData.map((data) => {
-    console.log(data.symbol);
+  const coinPrices = apiData.map((data) => {
     if (amounts.hasOwnProperty(String(data.symbol).toUpperCase())) {
       return data.current_price * amounts[String(data.symbol).toUpperCase()];
     }
   });
-  console.log('dataNumber', dataNumber);
-  const coinPrices = dataNumber.map((price) => {
-    if (price !== undefined) {
-      return price;
-    } else {
-      return 0;
-    }
-  });
 
-  const totalAmount =
+  const totalValue =
     coinPrices.reduce(
-      (acc: number, curr: number | null) => acc + (curr || 0),
+      (acc: number, curr: number | undefined) => acc + (curr || 0),
       0
     ) || 0;
-  console.log('sumofcoins', coinPrices);
-  console.log(totalAmount);
   const handleDelete = async (id: string) => {
     await Services.deleteData(id).then(() => {
       setUserCoins((data) => data.filter((item: any) => item._id !== id));
@@ -68,9 +49,11 @@ const DetailsPage = () => {
 
   const getAllCoinData = async () => {
     try {
-      await ApiService.getCoin<coinData[]>().then((output) =>
-        setApiData(output)
-      );
+      await ApiService.getCoin<coinData[]>().then((output) => {
+        if (output && output.length) {
+          setApiData(output);
+        }
+      });
     } catch (error) {
       console.error(error);
     }
@@ -107,14 +90,14 @@ const DetailsPage = () => {
 
         <View style={styles.portArea}>
           <Text style={styles.total}>
-            Total: ${totalAmount.toLocaleString()}{' '}
+            Total: ${totalValue.toLocaleString()}{' '}
           </Text>
           <Text style={styles.revenue}>
-            Revenue:
+            Profit:
             <Text
-              style={totalAmount - totalRev > 0 ? styles.green : styles.red}
+              style={totalValue - purchaseCost > 0 ? styles.green : styles.red}
             >
-              {` $${(totalAmount - totalRev).toLocaleString()}`}
+              {` $${(totalValue - purchaseCost).toLocaleString()}`}
             </Text>
           </Text>
         </View>
