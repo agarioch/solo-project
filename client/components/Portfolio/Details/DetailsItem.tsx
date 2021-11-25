@@ -10,14 +10,18 @@ import {
 import TabIcon from '../../TabIcons/TabIcon';
 import Icons from '../../../constants/Icons';
 import ApiService from '../../../services/marketApi';
+import { coinData } from '../../../types/coinData';
+import UserCoin from '../../../types/UserCoin';
 
-const DetailsItem = ({ item, onDelete }) => {
-  const [apiCall, setApiCall] = useState([]);
+const DetailsItem = ({ item, onDelete }: { item: UserCoin; onDelete: any }) => {
+  const [apiCall, setApiCall] = useState<coinData[]>([]);
 
   const getAllCoinData = async () => {
     try {
-      await ApiService.getCoin().then((output) => {
-        setApiCall(output);
+      await ApiService.getCoin<coinData[]>().then((output) => {
+        if (output && output.length) {
+          setApiCall(output);
+        }
       });
     } catch (error) {
       console.log(error);
@@ -25,26 +29,26 @@ const DetailsItem = ({ item, onDelete }) => {
   };
 
   const coinCurrentPrice = apiCall.map((data) => {
-    if (data['symbol'] == item.userCoin) {
-      return parseInt(data['price']);
+    if (data.symbol?.toUpperCase() === item.userCoin) {
+      return Number(data.current_price);
     }
   });
 
   const CoinPriceChange = apiCall.map((data) => {
-    if (data['symbol'] == item.userCoin) {
-      return data['1d']['price_change_pct'];
+    if (data.symbol?.toUpperCase() === item.userCoin) {
+      return data.price_change_percentage_24h;
     }
   });
 
   const dataNumber = apiCall.map((data) => {
-    if (data['symbol'] == item.userCoin) {
-      return parseInt(data['price']) * item.userAmount;
+    if (data.symbol?.toUpperCase() === item.userCoin) {
+      return Number(data.current_price) * item.userAmount;
     }
   });
 
   // This will get real time data
   setTimeout(() => {
-    getAllCoinData('BTC', 'ETH', 'SOL', 'ADA', 'SHIB');
+    getAllCoinData();
   }, 1000);
   clearTimeout();
 
@@ -56,59 +60,64 @@ const DetailsItem = ({ item, onDelete }) => {
   };
 
   const renderImage = ITEMS[item.userCoin] || null;
+  if (apiCall.length > 0) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={styles.coinItem}>
+          <View style={styles.row}>
+            <View style={styles.coinHeaderArea}>
+              <Text style={styles.coinHeader}>{item.userCoin}</Text>
+            </View>
 
-  return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.coinItem}>
-        <View style={styles.row}>
-          <View style={styles.coinHeaderArea}>
-            <Text style={styles.coinHeader}>{item.userCoin}</Text>
+            <Image
+              source={{
+                uri: renderImage,
+              }}
+              style={{
+                height: 50,
+                width: 50,
+                borderRadius: 50,
+                marginLeft: 40,
+                marginBottom: 15,
+              }}
+            />
           </View>
 
-          <Image
-            source={{
-              uri: renderImage,
-            }}
-            style={{
-              height: 50,
-              width: 50,
-              borderRadius: 50,
-              marginLeft: 40,
-              marginBottom: 15,
-            }}
-          />
-        </View>
-
-        <Text style={styles.coinText}>
-          <Text style={styles.textBlue}> Current Price: </Text> $
-          {coinCurrentPrice}
-        </Text>
-        <Text style={[styles.coinText, styles.marginLeft]}>
-          <Text style={styles.textBlue}>Price Change: </Text>
-          <Text style={CoinPriceChange > 0 ? styles.green : styles.red}>
-            {CoinPriceChange}%
+          <Text style={styles.coinText}>
+            <Text style={styles.textBlue}> Current Price: </Text> $
+            {coinCurrentPrice}
           </Text>
-        </Text>
+          <Text style={[styles.coinText, styles.marginLeft]}>
+            <Text style={styles.textBlue}>Price Change: </Text>
+            {typeof CoinPriceChange === 'number' && (
+              <Text style={CoinPriceChange > 0 ? styles.green : styles.red}>
+                {CoinPriceChange}%
+              </Text>
+            )}
+          </Text>
 
-        <Text style={styles.coinText}>
-          <Text style={styles.textBlue}> Bought at price: </Text> $
-          {item.boughtPrice.toLocaleString()}
-        </Text>
+          <Text style={styles.coinText}>
+            <Text style={styles.textBlue}> Bought at price: </Text> $
+            {item.boughtPrice.toLocaleString()}
+          </Text>
 
-        <Text style={[styles.coinText, { marginRight: 3 }]}>
-          <Text style={styles.textBlue}> Amount </Text>$
-          {dataNumber.toLocaleString().replace(/\D/g, '')}
-        </Text>
+          <Text style={[styles.coinText, { marginRight: 3 }]}>
+            <Text style={styles.textBlue}> Amount </Text>$
+            {dataNumber.toLocaleString().replace(/\D/g, '')}
+          </Text>
 
-        <TouchableOpacity
-          style={styles.deleteItem}
-          onPress={() => onDelete(item._id)}
-        >
-          <TabIcon icon={Icons.removeItem} />
-        </TouchableOpacity>
-      </View>
-    </SafeAreaView>
-  );
+          <TouchableOpacity
+            style={styles.deleteItem}
+            onPress={() => onDelete(item._id)}
+          >
+            <TabIcon icon={Icons.removeItem} />
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+    );
+  } else {
+    return <Text>Loading ...</Text>;
+  }
 };
 
 export default DetailsItem;

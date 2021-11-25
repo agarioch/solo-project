@@ -11,10 +11,13 @@ import {
   View,
 } from 'react-native';
 
-import DateTimePicker from '@react-native-community/datetimepicker';
+import DateTimePicker, {
+  Event,
+  AndroidEvent,
+} from '@react-native-community/datetimepicker';
 import { saveCoinData } from '../../../redux/CoinInputData';
 import { useDispatch } from 'react-redux';
-import Services from '../../../services/API';
+import Services from '../../../services/userCoinApi';
 
 import TabIcon2 from '../../TabIcons/TabIcon2';
 import Icons from '../../../constants/Icons';
@@ -22,13 +25,16 @@ import Icons from '../../../constants/Icons';
 const UserInput = () => {
   const dispatch = useDispatch();
   const [date, setDate] = useState(new Date());
-  const [boughtPrice, setBoughtPrice] = useState('');
-  const [userAmount, setUserAmount] = useState('');
+  const [boughtPrice, setBoughtPrice] = useState(0);
+  const [userAmount, setUserAmount] = useState(0);
   const [userCoin, setUserCoin] = useState('');
   const [show, setshow] = useState(false);
   const [selectDate, setselectDate] = useState(true);
 
-  const onChange = (_event: Event, selectedDate: Date) => {
+  const onChange = (
+    _event: Event | AndroidEvent,
+    selectedDate: Date | undefined
+  ) => {
     const currentDate = selectedDate || date;
     setDate(currentDate);
   };
@@ -44,10 +50,10 @@ const UserInput = () => {
     );
     await Services.addData({ date, boughtPrice, userAmount, userCoin });
 
-    setUserAmount('');
+    setUserAmount(0);
     setUserCoin('');
     setDate(new Date());
-    setBoughtPrice('');
+    setBoughtPrice(0);
   };
 
   return (
@@ -98,18 +104,18 @@ const UserInput = () => {
           <TextInput
             placeholder='Open price...'
             placeholderTextColor='#fff'
-            value={boughtPrice}
+            value={String(boughtPrice)}
             style={styles.input}
-            onChangeText={(val) => setBoughtPrice(val)}
+            onChangeText={(val) => setBoughtPrice(Number(val))}
             keyboardAppearance='dark'
             keyboardType={'numeric'}
           />
           <TextInput
             placeholder='Amount...'
             placeholderTextColor='#fff'
-            value={userAmount}
+            value={String(userAmount)}
             style={styles.input}
-            onChangeText={(val) => setUserAmount(val)}
+            onChangeText={(val) => setUserAmount(Number(val))}
             keyboardAppearance='dark'
             keyboardType={'numeric'}
           />

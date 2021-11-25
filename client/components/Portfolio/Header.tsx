@@ -11,7 +11,7 @@ import LottieView from 'lottie-react-native';
 
 import bitcoin from '../../assets/lottie/5638-bitcoin (1).json';
 
-const Header = ({ formatEmail }) => {
+const Header = ({ formatEmail }: { formatEmail: string }) => {
   const progress = useRef(new Animated.Value(0)).current;
 
   return (

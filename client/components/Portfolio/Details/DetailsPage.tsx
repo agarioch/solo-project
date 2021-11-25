@@ -11,59 +11,49 @@ import { useNavigation } from '@react-navigation/native';
 import DetailsItem from './DetailsItem';
 import TabIcon from '../../TabIcons/TabIcon';
 import Icons from '../../../constants/Icons';
-import Services from '../../../services/API';
+import Services from '../../../services/userCoinApi';
 import ApiService from '../../../services/marketApi';
+import UserCoin from '../../../types/UserCoin';
+import { coinData } from '../../../types/coinData';
 
 const DetailsPage = () => {
   const navigation = useNavigation();
-  const [values, setValues] = useState([]);
-  const [apiData, setApiData] = useState([]);
+  const [userCoins, setUserCoins] = useState<UserCoin[]>([]);
+  const [apiData, setApiData] = useState<coinData[]>([]);
 
-  // Returns total revenue of the portfolio
-  const revenue = () => {
-    let total = 0;
-    values.map((item) => {
-      const firstAmount = item['boughtPrice'] * item['userAmount'];
-      total += firstAmount;
-    });
-    return total;
-  };
+  const purchaseCost = userCoins.reduce(
+    (acc: number, coin) => acc + coin.boughtPrice * coin.userAmount,
+    0
+  );
 
-  const totalRev = revenue();
-
-  const valuesCoin: any = values.map((item) => item['userCoin']);
-  const valuesAmount: any = values.map((item) => item['userAmount']);
-
-  const dataNumber = apiData.map((data) => {
-    if (valuesCoin.includes(data['symbol'])) {
-      return parseInt(data['price']) * parseInt(valuesAmount);
+  let amounts: { [coin: string]: number } = {};
+  userCoins.forEach((coin) => {
+    amounts[coin.userCoin] = coin.userAmount;
+  });
+  const coinPrices = apiData.map((data) => {
+    if (amounts.hasOwnProperty(String(data.symbol).toUpperCase())) {
+      return data.current_price * amounts[String(data.symbol).toUpperCase()];
     }
   });
 
-  const sumofCoins = dataNumber.map((price) => {
-    let totalSum = 0;
-    if (price !== undefined) {
-      totalSum += price;
-    } else {
-      return null;
-    }
-    return totalSum;
-  });
-
-  // @ts-ignore:next-line
-  const totalAmount = (sumofCoins[0] +=
-    // @ts-ignore:next-line
-    sumofCoins[1] + sumofCoins[2] + sumofCoins[3]);
-
+  const totalValue =
+    coinPrices.reduce(
+      (acc: number, curr: number | undefined) => acc + (curr || 0),
+      0
+    ) || 0;
   const handleDelete = async (id: string) => {
     await Services.deleteData(id).then(() => {
-      setValues((data) => data.filter((item: any) => item._id !== id));
+      setUserCoins((data) => data.filter((item: any) => item._id !== id));
     });
   };
 
   const getAllCoinData = async () => {
     try {
-      await ApiService.getCoin().then((output) => setApiData(output));
+      await ApiService.getCoin<coinData[]>().then((output) => {
+        if (output && output.length) {
+          setApiData(output);
+        }
+      });
     } catch (error) {
       console.error(error);
     }
@@ -72,7 +62,7 @@ const DetailsPage = () => {
   const getDbData = async () => {
     try {
       await Services.getData().then((coinInfo) => {
-        setValues(coinInfo);
+        setUserCoins(coinInfo);
       });
     } catch (error) {
       console.error(error);
@@ -81,62 +71,68 @@ const DetailsPage = () => {
 
   // @ts-ignore:next-line
   useEffect(async () => {
-    getAllCoinData('BTC', 'ETH', 'SOL', 'ADA', 'DOGE', 'XRP', 'SHIB');
+    getAllCoinData();
     await getDbData();
   }, []);
 
   const renderItem = useCallback(
-    ({ item }) => (
-      <DetailsItem apiData={apiData} onDelete={handleDelete} item={item} />
+    ({ item }: { item: UserCoin }) => (
+      <DetailsItem onDelete={handleDelete} item={item} />
     ),
     []
   );
   const keyExtractor = useCallback((item) => item._id, []);
 
-  return (
-    <SafeAreaView style={styles.container}>
-      <Text style={styles.header}> Portfolio Details </Text>
+  if (userCoins.length) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <Text style={styles.header}> Portfolio Details </Text>
 
-      <View style={styles.portArea}>
-        <Text style={styles.total}>
-          Total: ${totalAmount.toLocaleString()}{' '}
-        </Text>
-        <Text style={styles.revenue}>
-          Revenue:
-          <Text style={totalAmount - totalRev > 0 ? styles.green : styles.red}>
-            {` $${(totalAmount - totalRev).toLocaleString()}`}
+        <View style={styles.portArea}>
+          <Text style={styles.total}>
+            Total: ${totalValue.toLocaleString()}{' '}
           </Text>
-        </Text>
-      </View>
-
-      <TouchableOpacity
-        style={styles.goback}
-        onPress={() => navigation.goBack()}
-      >
-        <TabIcon icon={Icons.goBack} />
-      </TouchableOpacity>
-
-      <FlatList
-        style={styles.flatListItem}
-        ListHeaderComponent={
-          <Text
-            style={{
-              color: '#fff',
-
-              opacity: 0.6,
-              letterSpacing: 2,
-              fontFamily: 'Chivo_400Regular',
-            }}
-          >
-            Your Assets:
+          <Text style={styles.revenue}>
+            Profit:
+            <Text
+              style={totalValue - purchaseCost > 0 ? styles.green : styles.red}
+            >
+              {` $${(totalValue - purchaseCost).toLocaleString()}`}
+            </Text>
           </Text>
-        }
-        data={values}
-        renderItem={renderItem}
-        keyExtractor={keyExtractor}
-      />
-    </SafeAreaView>
-  );
+        </View>
+
+        <TouchableOpacity
+          style={styles.goback}
+          onPress={() => navigation.goBack()}
+        >
+          <TabIcon icon={Icons.goBack} />
+        </TouchableOpacity>
+
+        <FlatList
+          style={styles.flatListItem}
+          ListHeaderComponent={
+            <Text
+              style={{
+                color: '#fff',
+
+                opacity: 0.6,
+                letterSpacing: 2,
+                fontFamily: 'Chivo_400Regular',
+              }}
+            >
+              Your Assets:
+            </Text>
+          }
+          data={userCoins}
+          renderItem={renderItem}
+          keyExtractor={keyExtractor}
+        />
+      </SafeAreaView>
+    );
+  } else {
+    return <Text>Loading ...</Text>;
+  }
 };
 
 export default DetailsPage;
